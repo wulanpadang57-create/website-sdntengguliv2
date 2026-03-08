@@ -1,496 +1,358 @@
 @extends('layouts.app')
-
-@section('title', 'Home - SD Negeri 1 Tengguli')
+@section('title', 'Beranda - SD Negeri 1 Tengguli')
 
 @section('content')
-<!-- Hero Slider dengan Animasi -->
-<div x-data="{ activeSlide: 0, slides: {{ $sliders->count() }} }" class="relative bg-gradient-to-b from-red-600 to-red-700 h-screen overflow-hidden">
-    @forelse($sliders as $index => $slider)
-        <div x-show="activeSlide === {{ $index }}" 
-             x-transition:enter="transition ease-in-out duration-1000"
-             x-transition:leave="transition ease-in-out duration-1000"
-             class="absolute inset-0">
-            <img src="{{ asset('storage/' . $slider->image) }}" alt="{{ $slider->title }}" class="w-full h-full object-cover opacity-40">
-            <div class="absolute inset-0 bg-gradient-to-r from-red-600/80 to-red-700/80"></div>
-            
-            <div class="absolute inset-0 flex items-center justify-center">
-                <div class="text-center text-white px-4 max-w-4xl mx-auto animate-fade-in">
-                    <h1 class="text-5xl md:text-7xl font-bold mb-4 leading-tight">
-                        @if($slider->title)
-                            {{ $slider->title }}
-                        @else
-                            SD Negeri 1 Tengguli
-                        @endif
-                    </h1>
-                    @if($slider->caption)
-                        <p class="text-xl md:text-2xl mb-8 text-gray-100">{{ $slider->caption }}</p>
-                    @else
-                        <p class="text-xl md:text-2xl mb-8 text-gray-100">Raih Masa Depan Gemilang Bersama Kami</p>
-                    @endif
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        @if($slider->button_text && $slider->button_url)
-                            <a href="{{ $slider->button_url }}" class="btn-primary px-8 py-3 text-lg">{{ $slider->button_text }}</a>
-                        @else
-                            <a href="{{ route('news.index') }}" class="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-bold transition transform hover:scale-105">Pelajari Lebih Lanjut</a>
-                        @endif
-                        <a href="{{ route('teacher.index') }}" class="border-2 border-white hover:bg-white hover:text-red-600 px-8 py-3 rounded-lg font-bold transition transform hover:scale-105">Bertemu Guru Kami</a>
+
+{{-- ================================================================
+     HERO
+================================================================ --}}
+<section class="hero"
+         x-data="{
+             current: 0,
+             total: {{ max($sliders->count(), 1) }},
+             autoplay() {
+                 setInterval(() => { this.current = (this.current + 1) % this.total; }, 5000);
+             }
+         }"
+         x-init="autoplay()">
+
+    {{-- Slides --}}
+    @if($sliders->count())
+    @foreach($sliders as $i => $slide)
+    <div class="absolute inset-0 transition-opacity duration-700"
+         :class="{{ $i }} === current ? 'opacity-100' : 'opacity-0'">
+        @if($slide->image)
+        <img src="{{ asset('storage/'.$slide->image) }}" alt="{{ $slide->title }}"
+             class="w-full h-full object-cover">
+        @endif
+        <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(10,74,60,.8) 0%,rgba(200,178,126,.3) 100%)"></div>
+    </div>
+    @endforeach
+    @else
+    <div class="absolute inset-0" style="background:linear-gradient(135deg,#0a4a3c 0%,#2aad8c 50%,#C8B27E 100%)"></div>
+    @endif
+
+    {{-- Decorative shapes --}}
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div class="absolute top-20 right-0 w-96 h-96 rounded-full opacity-10"
+             style="background:radial-gradient(circle,#2aad8c,transparent 70%)"></div>
+        <div class="absolute -bottom-24 -left-24 w-80 h-80 rounded-full opacity-10"
+             style="background:radial-gradient(circle,#C8B27E,transparent 70%)"></div>
+    </div>
+
+    {{-- Content --}}
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div class="max-w-2xl">
+            <div class="mb-5">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold text-white/80 border border-white/20"
+                      style="background:rgba(255,255,255,.08);backdrop-filter:blur(8px)">
+                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                    Sekolah Dasar Negeri Terbaik
+                </span>
+            </div>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-5">
+                Selamat Datang di<br>
+                <span style="color:#5DCFB3">SD Negeri 1</span><br>
+                Tengguli
+            </h1>
+            <p class="text-white/70 text-lg leading-relaxed mb-3">
+                Membentuk generasi cerdas, berkarakter, dan berwawasan luas demi masa depan bangsa yang gemilang.
+            </p>
+            @if($sliders->count())
+            <p class="text-white/80 text-base font-medium mb-8"
+               x-text="{{ json_encode($sliders->pluck('title')->toArray()) }}[current]"></p>
+            @else
+            <div class="mb-8"></div>
+            @endif
+
+            <div class="flex flex-wrap gap-3">
+                <a href="{{ route('news.index') }}" class="btn btn-primary">
+                    <i class="fas fa-newspaper text-sm"></i>Berita Terbaru
+                </a>
+                <a href="{{ route('achievement.index') }}" class="btn btn-outline">
+                    <i class="fas fa-trophy text-sm"></i>Prestasi Kami
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{-- Slide dots --}}
+    @if($sliders->count() > 1)
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        @foreach($sliders as $i => $slide)
+        <button @click="current = {{ $i }}"
+                :class="{{ $i }} === current ? 'hero-dot active' : 'hero-dot'"
+                aria-label="Slide {{ $i+1 }}"></button>
+        @endforeach
+    </div>
+    @endif
+</section>
+
+{{-- ================================================================
+     ANNOUNCEMENT TICKER
+================================================================ --}}
+@if($announcements->count())
+<div class="ticker-wrap">
+    <div class="ticker-track">
+        @for($t = 0; $t < 3; $t++)
+        @foreach($announcements as $ann)
+        <span class="inline-flex items-center gap-3 mr-12 text-sm font-semibold">
+            <i class="fas fa-bullhorn text-white/70 text-xs"></i>
+            {{ $ann->title }}
+        </span>
+        @endforeach
+        @endfor
+    </div>
+</div>
+@endif
+
+{{-- ================================================================
+     STATS
+================================================================ --}}
+<section style="background:linear-gradient(135deg,#0a4a3c,#1f8a6f,#2aad8c)" class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
+            @foreach([
+                ['fa-users','500+','500','Siswa Aktif',''],
+                ['fa-chalkboard-user','25+','25','Guru Profesional',''],
+                ['fa-trophy','200+','200','Prestasi',''],
+                ['fa-calendar-check','25+','25','Tahun Berdiri',''],
+            ] as [$icon,$display,$num,$label,$suffix])
+            <div class="stat-card text-center">
+                <div class="w-12 h-12 rounded-xl bg-red-600/20 border border-red-500/30 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas {{ $icon }} text-red-400 text-xl"></i>
+                </div>
+                <div class="text-3xl font-extrabold text-white mb-1">
+                    <span data-counter data-target="{{ $num }}" data-suffix="+">{{ $display }}</span>
+                </div>
+                <div class="text-white/60 text-sm font-medium">{{ $label }}</div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ================================================================
+     ABOUT
+================================================================ --}}
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+            <div data-reveal="left">
+                <div class="section-eyebrow mb-4">Tentang Kami</div>
+                <h2 class="section-title mb-4">Sekolah Unggulan di<br><span class="gradient-text">Jawa Tengah</span></h2>
+                <div class="section-divider"></div>
+                <p class="text-gray-600 mb-4 leading-relaxed">
+                    SD Negeri 1 Tengguli adalah lembaga pendidikan dasar yang berkomitmen menghadirkan pendidikan berkualitas dengan didukung tenaga pengajar profesional dan fasilitas modern.
+                </p>
+                <p class="text-gray-600 mb-8 leading-relaxed">
+                    Kami percaya setiap anak memiliki potensi luar biasa. Misi kami adalah memfasilitasi tumbuh-kembang siswa secara optimal — akademis, karakter, dan bakat — sehingga siap menghadapi tantangan global.
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ route('teacher.index') }}" class="btn btn-primary">
+                        <i class="fas fa-chalkboard-user text-sm"></i>Kenali Guru Kami
+                    </a>
+                    <a href="{{ route('gallery.index') }}" class="btn btn-outline-red">
+                        <i class="fas fa-images text-sm"></i>Galeri Sekolah
+                    </a>
+                </div>
+            </div>
+
+            <div data-reveal="right">
+                <div class="grid grid-cols-2 gap-4">
+                    @foreach([
+                        ['fa-book-open','Kurikulum Modern','Pembelajaran berbasis Merdeka Belajar'],
+                        ['fa-users','Guru Berpengalaman','Tenaga pendidik bersertifikat & berkompetensi'],
+                        ['fa-medal','Berprestasi','Ratusan penghargaan di berbagai bidang'],
+                        ['fa-heart','Karakter Mulia','Menanamkan nilai moral & agama sejak dini'],
+                    ] as [$icon,$title,$desc])
+                    <div class="p-5 rounded-2xl border border-gray-100 hover:border-red-200 hover:shadow-md transition-all duration-300" style="background:#fffdf7">
+                        <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center mb-3">
+                            <i class="fas {{ $icon }} text-red-600"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900 text-sm mb-1">{{ $title }}</h3>
+                        <p class="text-gray-500 text-xs leading-relaxed">{{ $desc }}</p>
                     </div>
+                    @endforeach
                 </div>
             </div>
         </div>
-    @empty
-        <div class="absolute inset-0 flex items-center justify-center">
-            <div class="text-center text-white px-4 max-w-4xl mx-auto">
-                <h1 class="text-6xl md:text-7xl font-bold mb-4">SD Negeri 1 Tengguli</h1>
-                <p class="text-2xl md:text-3xl mb-8 text-gray-100">Raih Masa Depan Gemilang Bersama Kami</p>
-                <a href="{{ route('news.index') }}" class="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-bold text-lg transition inline-block">Jelajahi Sekarang</a>
-            </div>
-        </div>
-    @endforelse
+    </div>
+</section>
 
-    <!-- Navigation Dots dengan Improved Design -->
-    @if($sliders->count() > 1)
-        <div class="absolute bottom-12 left-0 right-0 flex justify-center space-x-3 z-10">
-            @for($i = 0; $i < $sliders->count(); $i++)
-                <button @click="activeSlide = {{ $i }}" 
-                        :class="activeSlide === {{ $i }} ? 'w-8 bg-white' : 'w-3 bg-white bg-opacity-50 hover:bg-opacity-75'"
-                        class="h-3 rounded-full transition duration-300">
-                </button>
-            @endfor
-        </div>
-
-        <script>
-            document.addEventListener('alpine:init', () => {
-                setInterval(() => {
-                    let el = document.querySelector('[x-data*="activeSlide"]');
-                    if (el && el.__x) {
-                        let data = el.__x.$data;
-                        data.activeSlide = (data.activeSlide + 1) % data.slides;
-                    }
-                }, 5000);
-            });
-        </script>
-    @endif
-</div>
-
-<!-- Pengumuman dengan Better Design -->
-@if($announcements->count() > 0)
-<section class="bg-gradient-to-r from-red-600 to-red-700 text-white py-6 sticky top-16 z-40 shadow-lg">
+{{-- ================================================================
+     NEWS
+================================================================ --}}
+@if($recentNews->count())
+<section class="py-20" style="background:#f6f3ec">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center space-x-4 animate-pulse">
-            <i class="fas fa-bell text-2xl flex-shrink-0"></i>
-            <div class="flex-1">
-                <p class="font-bold text-sm">PENGUMUMAN PENTING</p>
-                <p class="text-sm">{{ $announcements->first()->title }}</p>
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10" data-reveal="up">
+            <div>
+                <div class="section-eyebrow mb-3">Informasi Terkini</div>
+                <h2 class="section-title">Berita &amp; <span class="gradient-text">Artikel</span></h2>
             </div>
-            <i class="fas fa-arrow-right hidden sm:block"></i>
+            <a href="{{ route('news.index') }}" class="btn btn-outline-red flex-shrink-0">
+                Semua Berita <i class="fas fa-arrow-right text-xs"></i>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
+            @foreach($recentNews->take(6) as $item)
+            <article class="news-card">
+                <div class="news-card-img" style="height:190px">
+                    @if($item->featured_image)
+                    <img src="{{ asset('storage/'.$item->featured_image) }}" alt="{{ $item->title }}">
+                    @else
+                    <div class="w-full h-full flex items-center justify-center"
+                         style="background:linear-gradient(135deg,#a8e5d6,#2aad8c)">
+                        <i class="fas fa-newspaper text-white text-4xl opacity-30"></i>
+                    </div>
+                    @endif
+                    <div class="ribbon">{{ $item->category?->name ?? 'Umum' }}</div>
+                </div>
+                <div class="p-5 flex flex-col flex-1">
+                    <h3 class="font-bold text-gray-900 text-sm mb-2 line-clamp-2 hover:text-red-600 transition-colors">
+                        {{ $item->title }}
+                    </h3>
+                    <p class="text-gray-500 text-xs flex-1 line-clamp-2 mb-4 leading-relaxed">
+                        {{ Str::limit(strip_tags($item->content), 100) }}
+                    </p>
+                    <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                        <span class="flex items-center gap-1.5 text-xs text-gray-400">
+                            <i class="fas fa-calendar text-red-400"></i>
+                            {{ $item->published_at->format('d M Y') }}
+                        </span>
+                        <a href="{{ route('news.show', $item->slug) }}"
+                           class="text-red-600 text-xs font-bold flex items-center gap-1 hover:gap-2 transition-all">
+                            Baca <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+            </article>
+            @endforeach
         </div>
     </div>
 </section>
 @endif
 
-<!-- Tentang Sekolah - Enhanced -->
+{{-- ================================================================
+     ACHIEVEMENTS
+================================================================ --}}
+@if($achievements->count())
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div class="order-2 lg:order-1">
-                <div class="relative">
-                    <img src="https://images.unsplash.com/photo-1427504494785-cdff41400914?w=600&h=500&fit=crop" alt="Sekolah" class="rounded-2xl shadow-2xl hover:shadow-3xl transition transform hover:scale-105">
-                    <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-red-600 rounded-2xl opacity-10"></div>
-                </div>
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10" data-reveal="up">
+            <div>
+                <div class="section-eyebrow mb-3">Kebanggaan Sekolah</div>
+                <h2 class="section-title">Prestasi <span class="gradient-text">Gemilang</span></h2>
             </div>
-            <div class="order-1 lg:order-2" data-aos="fade-left" data-aos-duration="800">
-                <div class="space-y-2 mb-6">
-                    <p class="text-red-600 font-bold uppercase tracking-wider bounce-in-up">Tentang Kami</p>
-                    <h2 class="text-5xl font-bold text-gray-900 bounce-in-down">SD Negeri 1 Tengguli</h2>
-                </div>
-                <p class="text-gray-600 text-lg leading-relaxed mb-8 fade-blur">
-                    Sekolah Dasar Negeri 1 Tengguli adalah lembaga pendidikan yang berkomitmen untuk memberikan pendidikan berkualitas tinggi kepada setiap siswa. Dengan kurikulum modern dan pendekatan pembelajaran yang student-centered, kami mempersiapkan generasi muda untuk menghadapi tantangan masa depan.
-                </p>
-                
-                <div class="space-y-4 mb-8">
-                    <div class="flex items-start space-x-4 group bounce-in-left" data-aos="fade-up" data-aos-delay="100">
-                        <div class="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center group-hover:bg-red-600 transition group-hover:scale-110 group-hover:rotate-12">
-                            <i class="fas fa-star text-red-600 group-hover:text-white transition group-hover:scale-125"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-gray-900 text-lg group-hover:text-red-600 transition">Visi & Misi</h3>
-                            <p class="text-gray-600 text-sm">Membangun karakter unggul dan berakhlak mulia</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-4 group bounce-in-left" data-aos="fade-up" data-aos-delay="200">
-                        <div class="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center group-hover:bg-red-600 transition group-hover:scale-110 group-hover:rotate-12">
-                            <i class="fas fa-building text-red-600 group-hover:text-white transition group-hover:scale-125"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-gray-900 text-lg group-hover:text-red-600 transition">Fasilitas Lengkap</h3>
-                            <p class="text-gray-600 text-sm">Nyaman dan mendukung pembelajaran modern</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-4 group bounce-in-left" data-aos="fade-up" data-aos-delay="300">
-                        <div class="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center group-hover:bg-red-600 transition group-hover:scale-110 group-hover:rotate-12">
-                            <i class="fas fa-users text-red-600 group-hover:text-white transition group-hover:scale-125"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-gray-900 text-lg group-hover:text-red-600 transition">Guru Profesional</h3>
-                            <p class="text-gray-600 text-sm">Berpengalaman dan dedikasi tinggi</p>
-                        </div>
-            </div>
-                </div>
-                
-                <a href="{{ route('page.show', 'tentang') }}" class="btn-primary inline-block px-8 py-3 text-lg hover:shadow-lg transition transform hover:-translate-y-1">
-                    <i class="fas fa-arrow-right mr-2"></i>Pelajari Lebih Lanjut
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Statistik - Animated Counters -->
-<section class="py-16 bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10">
-        <div class="absolute top-0 -left-4 w-72 h-72 bg-red-400 rounded-full mix-blend-multiply filter blur-3xl"></div>
-        <div class="absolute -bottom-8 right-0 w-72 h-72 bg-red-300 rounded-full mix-blend-multiply filter blur-3xl"></div>
-    </div>
-    
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <h2 class="text-4xl font-bold text-center mb-16">Statistik Sekolah</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="text-center group cursor-pointer flip-in-x" x-data="{ count: 0 }" x-intersect="count = 500">
-                <div class="mb-4 group-hover:scale-110 transition duration-300 transform group-hover:rotate-12 animate-pulse">
-                    <i class="fas fa-users text-6xl"></i>
-                </div>
-                <p class="text-5xl font-bold mb-2 text-shimmer" x-text="count + '+'"></p>
-                <p class="text-lg opacity-90">Siswa Aktif</p>
-                <p class="text-sm opacity-75 mt-2">Dari berbagai tingkat kelas</p>
-            </div>
-            
-            <div class="text-center group cursor-pointer flip-in-x" x-data="{ count: 0 }" x-intersect="count = 35" style="animation-delay: 0.1s;">
-                <div class="mb-4 group-hover:scale-110 transition duration-300 transform group-hover:rotate-12 animate-pulse" style="animation-delay: 0.2s;">
-                    <i class="fas fa-chalkboard-user text-6xl"></i>
-                </div>
-                <p class="text-5xl font-bold mb-2 text-shimmer" x-text="count + '+'"></p>
-                <p class="text-lg opacity-90">Tenaga Profesional</p>
-                <p class="text-sm opacity-75 mt-2">Guru bersertifikat & terlatih</p>
-            </div>
-            
-            <div class="text-center group cursor-pointer flip-in-x" x-data="{ count: 0 }" x-intersect="count = 25" style="animation-delay: 0.2s;">
-                <div class="mb-4 group-hover:scale-110 transition duration-300 transform group-hover:rotate-12 animate-pulse" style="animation-delay: 0.3s;">
-                    <i class="fas fa-door-open text-6xl"></i>
-                </div>
-                <p class="text-5xl font-bold mb-2 text-shimmer" x-text="count + '+'"></p>
-                <p class="text-lg opacity-90">Ruangan Modern</p>
-                <p class="text-sm opacity-75 mt-2">Dilengkapi teknologi terkini</p>
-            </div>
-            
-            <div class="text-center group cursor-pointer flip-in-x" x-data="{ count: 0 }" x-intersect="count = 150" style="animation-delay: 0.3s;">
-                <div class="mb-4 group-hover:scale-110 transition duration-300 transform group-hover:rotate-12 animate-pulse" style="animation-delay: 0.4s;">
-                    <i class="fas fa-trophy text-6xl"></i>
-                </div>
-                <p class="text-5xl font-bold mb-2 text-shimmer" x-text="count + '+'"></p>
-                <p class="text-lg opacity-90">Prestasi & Penghargaan</p>
-                <p class="text-sm opacity-75 mt-2">Tingkat lokal hingga nasional</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Berita Terbaru - Enhanced Cards -->
-<section class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <p class="text-red-600 font-bold uppercase tracking-wider mb-2">Informasi Terkini</p>
-            <h2 class="text-5xl font-bold text-gray-900">
-                Berita <span class="text-red-600">Terbaru</span>
-            </h2>
-            <p class="text-gray-600 mt-4 max-w-2xl mx-auto">Tetap update dengan berita dan informasi terbaru dari SD Negeri 1 Tengguli</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            @forelse($recentNews as $index => $news)
-                <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-2 zoom-in" style="animation-delay: {{ $index * 0.1 }}s;">
-                    <div class="relative overflow-hidden h-48">
-                        @if($news->featured_image)
-                            <img src="{{ asset('storage/' . $news->featured_image) }}" alt="{{ $news->title }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        @else
-                            <div class="w-full h-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center group-hover:scale-110 transition duration-500">
-                                <i class="fas fa-newspaper text-white text-5xl opacity-50"></i>
-                            </div>
-                        @endif
-                        <div class="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-full text-xs font-bold pop" style="animation-delay: {{ $index * 0.1 + 0.2 }}s;">{{ $news->category?->name ?? 'Umum' }}</div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-red-600 transition line-clamp-2">{{ $news->title }}</h3>
-                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ strip_tags(Str::limit($news->content, 100)) }}</p>
-                        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
-                            <p class="text-gray-500 text-xs">{{ $news->published_at->format('d M Y') }}</p>
-                            <a href="{{ route('news.show', $news->slug) }}" class="text-red-600 hover:text-red-700 font-bold text-sm group-hover:translate-x-2 transition inline-block">Selengkapnya →</a>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <p class="text-center text-gray-600 col-span-full py-12">Belum ada berita</p>
-            @endforelse
-        </div>
-
-        <div class="text-center mt-12">
-            <a href="{{ route('news.index') }}" class="btn-primary px-8 py-3 text-lg inline-block hover:shadow-lg transition transform hover:-translate-y-1">
-                <i class="fas fa-newspaper mr-2"></i>Lihat Semua Berita
+            <a href="{{ route('achievement.index') }}" class="btn btn-outline-red flex-shrink-0">
+                Semua Prestasi <i class="fas fa-arrow-right text-xs"></i>
             </a>
         </div>
-    </div>
-</section>
 
-<!-- Prestasi - Better Grid -->
-<section class="py-20 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <p class="text-red-600 font-bold uppercase tracking-wider mb-2">Kebanggaan Kami</p>
-            <h2 class="text-5xl font-bold text-gray-900">
-                Prestasi <span class="text-red-600">Siswa</span>
-            </h2>
-            <p class="text-gray-600 mt-4 max-w-2xl mx-auto">Berbagai penghargaan dan prestasi telah diraih oleh siswa-siswi kami</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @forelse($achievements as $index => $achievement)
-                <div class="group bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition duration-300 border-l-4 border-transparent hover:border-red-600 transform hover:-translate-y-2 bounce-in-up" style="animation-delay: {{ $index * 0.15 }}s;">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="w-16 h-16 bg-gradient-to-br from-yellow-300 to-yellow-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition transform group-hover:rotate-12 heartbeat">
-                            <i class="fas fa-star text-yellow-700 text-2xl group-hover:scale-150 transition"></i>
-                        </div>
-                        <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold pop">{{ $achievement->category }}</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
+            @foreach($achievements->take(6) as $ach)
+            <div class="achievement-card">
+                <div class="flex items-start gap-4">
+                    <div class="trophy-icon">
+                        <i class="fas fa-medal text-yellow-600 text-xl"></i>
                     </div>
-                    
-                    @if($achievement->achievement_image)
-                        <img src="{{ asset('storage/' . $achievement->achievement_image) }}" alt="{{ $achievement->title }}" class="w-full h-32 object-cover rounded-lg mb-4 transform group-hover:scale-105 transition duration-300">
+                    <div class="flex-1 min-w-0">
+                        <span class="badge badge-red mb-2 capitalize">{{ $ach->category }}</span>
+                        <h3 class="font-bold text-gray-900 text-sm line-clamp-2">{{ $ach->title }}</h3>
+                    </div>
+                </div>
+                @if($ach->description)
+                <p class="text-gray-500 text-xs mt-3 line-clamp-2 leading-relaxed">{{ Str::limit($ach->description, 100) }}</p>
+                @endif
+                <div class="flex items-center gap-3 mt-4 pt-3 border-t border-gray-100 text-xs text-gray-400">
+                    @if($ach->student_name)
+                    <span class="flex items-center gap-1"><i class="fas fa-user text-red-400"></i>{{ $ach->student_name }}</span>
                     @endif
-                    
-                    <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-red-600 transition">{{ $achievement->title }}</h3>
-                    <p class="text-gray-600 text-sm mb-1"><i class="fas fa-user-graduate mr-2 text-red-600 group-hover:scale-125 transition"></i>{{ $achievement->student_name ?? 'Siswa SD 1 Tengguli' }}</p>
-                    <p class="text-gray-500 text-xs"><i class="fas fa-calendar mr-2 text-red-600 group-hover:scale-125 transition"></i>{{ $achievement->achievement_date->format('d M Y') }}</p>
+                    <span class="flex items-center gap-1 ml-auto"><i class="fas fa-calendar text-red-400"></i>{{ $ach->achievement_date->format('Y') }}</span>
                 </div>
-            @empty
-                <p class="text-center text-gray-600 col-span-full py-12">Belum ada prestasi</p>
-            @endforelse
-        </div>
-
-        <div class="text-center mt-12">
-            <a href="{{ route('achievement.index') }}" class="btn-primary px-8 py-3 text-lg inline-block hover:shadow-lg transition transform hover:-translate-y-1">
-                <i class="fas fa-trophy mr-2"></i>Lihat Semua Prestasi
-            </a>
+            </div>
+            @endforeach
         </div>
     </div>
 </section>
+@endif
 
-<!-- Guru Section -->
-<section class="py-20 bg-white">
+{{-- ================================================================
+     TEACHERS
+================================================================ --}}
+@if($teachers->count())
+<section class="py-20" style="background:#f6f3ec">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <p class="text-red-600 font-bold uppercase tracking-wider mb-2">Tim Pendidik</p>
-            <h2 class="text-5xl font-bold text-gray-900">
-                Guru <span class="text-red-600">Profesional</span>
-            </h2>
-            <p class="text-gray-600 mt-4 max-w-2xl mx-auto">Tenaga pengajar berpengalaman dan berdedikasi tinggi</p>
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10" data-reveal="up">
+            <div>
+                <div class="section-eyebrow mb-3">Tim Pengajar</div>
+                <h2 class="section-title">Guru <span class="gradient-text">Profesional</span></h2>
+            </div>
+            <a href="{{ route('teacher.index') }}" class="btn btn-outline-red flex-shrink-0">
+                Lihat Semua <i class="fas fa-arrow-right text-xs"></i>
+            </a>
         </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            @forelse($teachers->take(3) as $index => $teacher)
-                <div class="group bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 text-center flip-in-y" style="animation-delay: {{ $index * 0.15 }}s;">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
+            @foreach($teachers as $teacher)
+            <div class="teacher-card">
+                <div class="teacher-img-wrap" style="height:260px">
                     @if($teacher->photo)
-                        <img src="{{ asset('storage/' . $teacher->photo) }}" alt="{{ $teacher->name }}" class="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-red-600 group-hover:scale-110 transition transform group-hover:rotate-12">
+                    <img src="{{ asset('storage/'.$teacher->photo) }}" alt="{{ $teacher->name }}">
                     @else
-                        <div class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-red-600 flex items-center justify-center bg-gradient-to-br from-red-400 to-red-600 group-hover:scale-110 transition transform group-hover:rotate-12">
-                            <i class="fas fa-user text-white text-3xl"></i>
-                        </div>
+                    <div class="w-full h-full flex items-center justify-center"
+                         style="background:linear-gradient(135deg,#a8e5d6,#2aad8c)">
+                        <i class="fas fa-user-tie text-white text-6xl opacity-30"></i>
+                    </div>
                     @endif
-                    <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition">{{ $teacher->name }}</h3>
-                    <p class="text-red-600 font-semibold mb-2 group-hover:scale-110 transition inline-block">{{ $teacher->position }}</p>
-                    <p class="text-gray-600 text-sm line-clamp-2">{{ $teacher->subjects ?? 'Guru Berkualitas' }}</p>
+                    <div class="teacher-overlay">
+                        <div>
+                            <p class="text-white font-bold">{{ $teacher->name }}</p>
+                            @if($teacher->subjects)
+                            <p class="text-white/70 text-sm">{{ $teacher->subjects }}</p>
+                            @endif
+                        </div>
+                    </div>
                 </div>
-            @empty
-            @endforelse
+                <div class="p-5 text-center">
+                    <h3 class="font-bold text-gray-900">{{ $teacher->name }}</h3>
+                    <p class="text-red-600 font-semibold text-sm mt-1">{{ $teacher->position }}</p>
+                    @if($teacher->subjects)
+                    <p class="text-gray-500 text-xs mt-1">{{ $teacher->subjects }}</p>
+                    @endif
+                </div>
+            </div>
+            @endforeach
         </div>
+    </div>
+</section>
+@endif
 
-        <div class="text-center">
-            <a href="{{ route('teacher.index') }}" class="btn-primary px-8 py-3 text-lg inline-block hover:shadow-lg transition transform hover:-translate-y-1">
-                <i class="fas fa-users mr-2"></i>Lihat Semua Guru
+{{-- ================================================================
+     CTA
+================================================================ --}}
+<section class="py-20" style="background:linear-gradient(135deg,#0a4a3c,#2aad8c,#C8B27E)">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center" data-reveal="up">
+        <div class="section-eyebrow mb-5 mx-auto"
+             style="background:rgba(255,255,255,.15);color:rgba(255,255,255,.9)">
+            Bergabung Bersama Kami
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-5">
+            Daftarkan Putra-Putri Anda<br>
+            <span style="color:#5DCFB3">di SD Negeri 1 Tengguli</span>
+        </h2>
+        <p class="text-white/60 text-base mb-10 leading-relaxed max-w-xl mx-auto">
+            Bersama kami, anak Anda akan tumbuh dalam lingkungan belajar yang kondusif, kreatif, dan penuh kasih sayang. Mari wujudkan cita-cita mereka bersama.
+        </p>
+        <div class="flex flex-wrap gap-4 justify-center">
+            <a href="tel:+62274123456" class="btn btn-primary">
+                <i class="fas fa-phone text-sm"></i>Hubungi Sekolah
             </a>
-        </div>
-    </div>
-</section>
-
-<!-- Testimonials - Interactive -->
-<section class="py-20 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <p class="text-red-600 font-bold uppercase tracking-wider mb-2">Apa Kata Mereka</p>
-            <h2 class="text-5xl font-bold text-gray-900">
-                Testimoni <span class="text-red-600">Orang Tua & Siswa</span>
-            </h2>
-            <p class="text-gray-600 mt-4 max-w-2xl mx-auto">Kepuasan orang tua dan prestasi siswa adalah prioritas utama kami</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 bounce-in-down" data-aos="fade-up" style="animation-delay: 0;">
-                <div class="flex items-center mb-4">
-                    <div class="flex text-yellow-400 animate-pulse">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-                <p class="text-gray-600 mb-6">Sekolah yang luar biasa dengan guru-guru yang berdedikasi. Anak saya berkembang pesat baik akademik maupun kepribadiannya.</p>
-                <div class="flex items-center space-x-4 border-t pt-6">
-                    <div class="w-12 h-12 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center text-white transform group-hover:scale-125 transition">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold text-gray-900">Ibu Siti</p>
-                        <p class="text-sm text-gray-600">Orang Tua Siswa</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 bounce-in-down" data-aos="fade-up" data-aos-delay="100" style="animation-delay: 0.1s;">
-                <div class="flex items-center mb-4">
-                    <div class="flex text-yellow-400 animate-pulse" style="animation-delay: 0.1s;">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-                <p class="text-gray-600 mb-6">Fasilitas yang lengkap dan lingkungan belajar yang sangat mendukung. Anak saya senang belajar di sekolah ini.</p>
-                <div class="flex items-center space-x-4 border-t pt-6">
-                    <div class="w-12 h-12 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center text-white transform group-hover:scale-125 transition">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold text-gray-900">Pak Ahmad</p>
-                        <p class="text-sm text-gray-600">Orang Tua Siswa</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 bounce-in-down" data-aos="fade-up" data-aos-delay="200" style="animation-delay: 0.2s;">
-                <div class="flex items-center mb-4">
-                    <div class="flex text-yellow-400 animate-pulse" style="animation-delay: 0.2s;">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-                <p class="text-gray-600 mb-6">SD Negeri 1 Tengguli adalah pilihan terbaik untuk pendidikan anak. Sangat merekomendasikan kepada semua orang tua.</p>
-                <div class="flex items-center space-x-4 border-t pt-6">
-                    <div class="w-12 h-12 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center text-white transform group-hover:scale-125 transition">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold text-gray-900">Ibu Nita</p>
-                        <p class="text-sm text-gray-600">Orang Tua Siswa</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- FAQ Section - Interactive -->
-<section class="py-20 bg-white">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <p class="text-red-600 font-bold uppercase tracking-wider mb-2">Pertanyaan Umum</p>
-            <h2 class="text-5xl font-bold text-gray-900">
-                <span class="text-red-600">FAQ</span> - Sering Ditanyakan
-            </h2>
-        </div>
-        
-        <div class="space-y-4">
-            <!-- FAQ Item 1 -->
-            <div class="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition duration-300 bounce-in-up" style="animation-delay: 0;">
-                <button class="w-full px-6 py-5 flex justify-between items-center font-bold text-gray-900 text-left hover:bg-red-50 transition" data-accordion-toggle="faq-1">
-                    <span class="flex items-center space-x-3">
-                        <i class="fas fa-graduation-cap text-red-600 group-hover:rotate-12 transition"></i>
-                        <span>Apa saja syarat pendaftaran?</span>
-                    </span>
-                    <i class="fas fa-chevron-down transition duration-300 transform group-hover:rotate-180"></i>
-                </button>
-                <div id="faq-1" class="hidden px-6 py-4 text-gray-600 bg-white fade-blur">
-                    <p>Siswa dapat mendaftar dengan membawa fotokopi akta kelahiran, kartu keluarga, foto 2x3 sebanyak 4 lembar, dan sudah menyelesaikan pendidikan TK atau sederajat.</p>
-                </div>
-            </div>
-
-            <!-- FAQ Item 2 -->
-            <div class="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition duration-300 bounce-in-up" style="animation-delay: 0.1s;">
-                <button class="w-full px-6 py-5 flex justify-between items-center font-bold text-gray-900 text-left hover:bg-red-50 transition" data-accordion-toggle="faq-2">
-                    <span class="flex items-center space-x-3">
-                        <i class="fas fa-calendar text-red-600 group-hover:rotate-12 transition"></i>
-                        <span>Kapan pendaftaran dibuka?</span>
-                    </span>
-                    <i class="fas fa-chevron-down transition duration-300 transform group-hover:rotate-180"></i>
-                </button>
-                <div id="faq-2" class="hidden px-6 py-4 text-gray-600 bg-white fade-blur">
-                    <p>Pendaftaran dibuka setiap tahun pada bulan Januari hingga Maret. Untuk informasi lebih detail, silakan hubungi kantor sekolah kami.</p>
-                </div>
-            </div>
-
-            <!-- FAQ Item 3 -->
-            <div class="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition duration-300 bounce-in-up" style="animation-delay: 0.2s;">
-                <button class="w-full px-6 py-5 flex justify-between items-center font-bold text-gray-900 text-left hover:bg-red-50 transition" data-accordion-toggle="faq-3">
-                    <span class="flex items-center space-x-3">
-                        <i class="fas fa-dollar-sign text-red-600 group-hover:rotate-12 transition"></i>
-                        <span>Berapa biaya pendidikan?</span>
-                    </span>
-                    <i class="fas fa-chevron-down transition duration-300 transform group-hover:rotate-180"></i>
-                </button>
-                <div id="faq-3" class="hidden px-6 py-4 text-gray-600 bg-white fade-blur">
-                    <p>SD Negeri 1 Tengguli adalah sekolah negeri, sehingga biaya pendidikan sangat terjangkau. Untuk detail rincian biaya, silakan datang langsung ke sekolah.</p>
-                </div>
-            </div>
-
-            <!-- FAQ Item 4 -->
-            <div class="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition duration-300 bounce-in-up" style="animation-delay: 0.3s;">
-                <button class="w-full px-6 py-5 flex justify-between items-center font-bold text-gray-900 text-left hover:bg-red-50 transition" data-accordion-toggle="faq-4">
-                    <span class="flex items-center space-x-3">
-                        <i class="fas fa-book text-red-600 group-hover:rotate-12 transition"></i>
-                        <span>Kurikulum apa yang digunakan?</span>
-                    </span>
-                    <i class="fas fa-chevron-down transition duration-300 transform group-hover:rotate-180"></i>
-                </button>
-                <div id="faq-4" class="hidden px-6 py-4 text-gray-600 bg-white fade-blur">
-                    <p>Kami menggunakan Kurikulum 2013 yang telah disesuaikan dengan kebutuhan pendidikan nasional dan pengembangan karakter siswa.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- CTA - Enhanced -->
-<section class="py-20 bg-gradient-to-r from-red-600 to-red-700 text-white relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10">
-        <svg class="absolute w-full h-full" preserveAspectRatio="none" viewBox="0 0 1200 120">
-            <path d="M0,50 Q300,100 600,50 T1200,50 L1200,0 L0,0 Z" fill="currentColor"></path>
-        </svg>
-    </div>
-    
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-        <h2 class="text-5xl font-bold mb-6 bounce-in-down">Bergabunglah dengan Kami</h2>
-        <p class="text-xl opacity-90 mb-4 leading-relaxed fade-blur">Raih kesempatan emas untuk mendapatkan pendidikan berkualitas tinggi dan membangun masa depan gemilang di SD Negeri 1 Tengguli</p>
-        <p class="text-lg opacity-80 mb-8 fade-blur" style="animation-delay: 0.1s;">Daftarkan putra/putri Anda sekarang dan jadilah bagian dari keluarga besar sekolah kami</p>
-        
-        <div class="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-            <a href="#" class="bg-white text-red-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-bold text-lg transition transform hover:scale-105 shadow-lg slide-in-left heartbeat" style="animation-delay: 0.2s;">
-                <i class="fas fa-pencil-alt mr-2"></i>Daftar Sekarang
-            </a>
-            <a href="{{ route('news.index') }}" class="border-2 border-white hover:bg-white hover:text-red-600 px-8 py-4 rounded-lg font-bold text-lg transition transform hover:scale-105 slide-in-right" style="animation-delay: 0.3s;">
-                <i class="fas fa-info-circle mr-2"></i>Pelajari Lebih Lanjut
+            <a href="{{ route('gallery.index') }}" class="btn btn-outline">
+                <i class="fas fa-images text-sm"></i>Lihat Galeri
             </a>
         </div>
     </div>

@@ -1,13 +1,145 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Website SDN 1 Tengguli
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Platform website untuk sekolah yang dibangun dengan Laravel 10 dan Tailwind CSS.
 
-## About Laravel
+## 📋 Daftar Isi
+- [Teknologi yang Digunakan](#teknologi-yang-digunakan)
+- [Persyaratan Sistem](#persyaratan-sistem)
+- [Panduan Setup Awal](#panduan-setup-awal)
+- [Fitur Utama](#fitur-utama)
+- [Struktur Database](#struktur-database)
+- [Troubleshooting](#troubleshooting)
+
+## 🛠️ Teknologi yang Digunakan
+
+| Layer | Teknologi |
+|-------|-----------|
+| **Backend** | Laravel 10.10, PHP 8.1+ |
+| **Frontend** | Tailwind CSS 3.1, Alpine.js 3.4, Vite 5.0 |
+| **Database** | MySQL 8.0+ |
+| **Build Tools** | Vite, npm/yarn |
+| **Testing** | PHPUnit 10.1 |
+
+## ⚙️ Persyaratan Sistem
+
+Sebelum memulai, pastikan Anda sudah install:
+
+- **PHP 8.1+** - [Download](https://www.php.net/downloads.php)
+- **Composer** - [Download](https://getcomposer.org/download/)
+- **Node.js 16+** - [Download](https://nodejs.org/)
+- **MySQL 8.0+** - [Download](https://www.mysql.com/downloads/) atau gunakan Laragon/XAMPP
+- **Git** - [Download](https://git-scm.com/)
+
+### Verifikasi Instalasi
+```bash
+php --version
+composer --version
+node --version
+npm --version
+mysql --version
+```
+
+## 🚀 Panduan Setup Awal
+
+### Untuk Windows (Laragon/XAMPP)
+
+#### **Cara Tercepat (Menggunakan Setup Script):**
+
+```bash
+# 1. Clone repository
+git clone <repository-url>
+cd websitesdn1tengguli
+
+# 2. Jalankan setup script (double-click atau cmd)
+setup.bat
+
+# 3. Buka .env dan sesuaikan konfigurasi database
+# Contoh untuk Laragon:
+DB_HOST=127.0.0.1
+DB_DATABASE=websitesdn1tengguli
+DB_USERNAME=root
+DB_PASSWORD=
+
+# 4. Buat database di MySQL
+# Buka MySQL admin (Laragon: Win+Alt+M atau terminal)
+CREATE DATABASE websitesdn1tengguli;
+
+# 5. Jalankan migrations & seeders
+php artisan migrate --seed
+
+# 6. Jalankan server
+php artisan serve
+
+# Akses di http://localhost:8000
+```
+
+#### **Cara Manual (Step by Step):**
+
+Jika `setup.bat` tidak berfungsi, lakukan manual:
+
+```bash
+# 1. Clone & masuk folder
+git clone <repository-url>
+cd websitesdn1tengguli
+
+# 2. Copy environment file
+copy .env.example .env
+
+# 3. Update .env dengan database credentials
+# Edit file .env:
+APP_URL=http://localhost:8000
+DB_HOST=127.0.0.1
+DB_DATABASE=websitesdn1tengguli
+DB_USERNAME=root
+DB_PASSWORD=
+
+# 4. Install PHP dependencies
+composer install
+
+# 5. Install Node dependencies
+npm install
+
+# 6. Generate APP_KEY
+php artisan key:generate
+
+# 7. Buat database
+# Buka MySQL & jalankan:
+CREATE DATABASE websitesdn1tengguli;
+
+# 8. Jalankan migrasi
+php artisan migrate
+
+# 9. Jalankan seeder (buat admin user)
+php artisan db:seed
+
+# 10. Build frontend assets
+npm run build
+
+# 11. (Optional) Run in development mode dengan auto-reload
+npm run dev
+
+# 12. Di terminal baru, jalankan Laravel server
+php artisan serve
+```
+
+### Untuk Linux/Mac
+
+```bash
+# Langkah sama seperti manual, tapi gunakan bash/zsh
+git clone <repository-url>
+cd websitesdn1tengguli
+cp .env.example .env
+nano .env  # Edit sesuaikan database
+composer install
+npm install
+php artisan key:generate
+# Buat database
+php artisan migrate --seed
+npm run build
+php artisan serve
+```
+
+## 📦 Fitur Utama
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
@@ -64,3 +196,38 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+## Setup Project
+# 1. Clone repository
+git clone <repository-url>
+cd websitesdn1tengguli
+
+# 2. Copy .env.example ke .env
+cp .env.example .env
+
+# 3. Update .env sesuai environment baru
+# Edit: DB_USERNAME, DB_PASSWORD, APP_URL, APP_KEY (jika kosong)
+
+# 4. Install PHP dependencies
+composer install
+
+# 5. Install npm dependencies
+npm install
+
+# 6. Generate APP_KEY (jika belum)
+php artisan key:generate
+
+# 7. Buat database baru terlebih dahulu
+
+# 8. Run migrations
+php artisan migrate
+
+# 9. Run seeders (untuk buat admin user)
+php artisan db:seed
+
+# 10. Build frontend assets
+npm run build
+
+# 11. Jalankan server
+php artisan serve

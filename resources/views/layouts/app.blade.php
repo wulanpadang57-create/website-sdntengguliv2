@@ -3,277 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SD Negeri 1 Tengguli - Sekolah Dasar terbaik di Jawa Tengah">
     <title>@yield('title', 'SD Negeri 1 Tengguli')</title>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
-    <!-- Leaflet Maps -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-    
-    <!-- AOS - Animate On Scroll -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-    
-    <!-- SweetAlert2 - Notifications -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @stack('styles')
 </head>
-<body class="font-sans text-gray-900 bg-gray-50">
-    <!-- Progress Bar -->
-    <div id="progress-bar" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-red-500 to-red-600 z-50 w-0 transition-all duration-300"></div>
+<body>
 
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md sticky top-0 z-50" x-data="{ mobileMenuOpen: false }">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-            <!-- Main Navbar -->
-            <div class="flex justify-between items-center h-16 md:h-20">
-                <!-- Logo - Responsive (Left) -->
-                <div class="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
-                    <i class="fas fa-school text-red-600 text-xl sm:text-2xl"></i>
-                    <div class="hidden sm:block">
-                        <p class="font-bold text-red-600 text-sm sm:text-lg leading-tight">SD 1 Tengguli</p>
-                        <p class="text-xs text-gray-600">Jawa Tengah</p>
+    {{-- Scroll progress --}}
+    <div id="progress-bar"></div>
+
+    {{-- ======================== NAVBAR ======================== --}}
+    <nav id="navbar" x-data="{ open: false }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+
+                {{-- Logo --}}
+                <a href="{{ route('home') }}" class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-school text-white text-sm"></i>
                     </div>
+                    <div class="leading-tight">
+                        <div class="font-bold text-sm" id="nav-title">SD Negeri 1 Tengguli</div>
+                        <div class="text-xs opacity-70" id="nav-sub">Jawa Tengah</div>
+                    </div>
+                </a>
+
+                {{-- Desktop links --}}
+                <div class="hidden md:flex items-center gap-1">
+                    @foreach([
+                        ['home','Beranda'],
+                        ['news.index','Berita'],
+                        ['achievement.index','Prestasi'],
+                        ['gallery.index','Galeri'],
+                        ['teacher.index','Guru & Staff'],
+                    ] as [$route, $label])
+                    <a href="{{ route($route) }}" class="nav-link {{ request()->routeIs($route) ? 'active' : '' }}">
+                        {{ $label }}
+                    </a>
+                    @endforeach
+
                 </div>
 
-                <!-- Desktop Menu (Right) -->
-                <div class="hidden md:flex items-center space-x-1 lg:space-x-6">
-                    <a href="{{ route('home') }}" class="text-gray-700 hover:text-red-600 hover:bg-red-50 px-3 py-2 rounded-md text-sm lg:text-base font-medium transition">Beranda</a>
-                    <a href="{{ route('news.index') }}" class="text-gray-700 hover:text-red-600 hover:bg-red-50 px-3 py-2 rounded-md text-sm lg:text-base font-medium transition">Berita</a>
-                    <a href="{{ route('achievement.index') }}" class="text-gray-700 hover:text-red-600 hover:bg-red-50 px-3 py-2 rounded-md text-sm lg:text-base font-medium transition">Prestasi</a>
-                    <a href="{{ route('gallery.index') }}" class="text-gray-700 hover:text-red-600 hover:bg-red-50 px-3 py-2 rounded-md text-sm lg:text-base font-medium transition">Galeri</a>
-                    <a href="{{ route('teacher.index') }}" class="text-gray-700 hover:text-red-600 hover:bg-red-50 px-3 py-2 rounded-md text-sm lg:text-base font-medium transition">Guru</a>
-
-                    <!-- Desktop User Menu (Right Side) -->
-                    @auth
-                        <div class="border-l border-gray-300 pl-6 ml-2">
-                            <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-red-600 hover:bg-red-50 px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition">
-                                <i class="fas fa-user-circle"></i>
-                                <span class="hidden sm:inline ml-1">{{ Auth::user()->name }}</span>
-                            </a>
-                            <form action="{{ route('logout') }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="text-gray-700 hover:text-red-600 hover:bg-red-50 px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm transition">Logout</button>
-                            </form>
-                        </div>
-                    @endauth
-                </div>
-
-                <!-- Mobile Menu Button (Right) -->
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-red-600 hover:bg-red-50 focus:outline-none transition">
-                    <i :class="mobileMenuOpen ? 'fas fa-times' : 'fas fa-bars'" class="text-xl"></i>
+                {{-- Mobile hamburger --}}
+                <button @click="open = !open"
+                        class="md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
+                        id="nav-hamburger"
+                        aria-label="Menu">
+                    <i :class="open ? 'fa-xmark' : 'fa-bars'" class="fas text-xl"></i>
                 </button>
             </div>
 
-            <!-- Mobile Menu -->
-            <div x-show="mobileMenuOpen" 
+            {{-- Mobile menu --}}
+            <div x-show="open"
                  x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
                  x-transition:leave="transition ease-in duration-150"
-                 class="md:hidden border-t border-gray-200">
-                <div class="px-2 pt-2 pb-3 space-y-1">
-                    <a href="{{ route('home') }}" class="text-gray-700 hover:text-red-600 hover:bg-red-50 block px-3 py-2 rounded-md text-base font-medium transition">
-                        <i class="fas fa-home mr-2 text-red-600"></i>Beranda
-                    </a>
-                    <a href="{{ route('news.index') }}" class="text-gray-700 hover:text-red-600 hover:bg-red-50 block px-3 py-2 rounded-md text-base font-medium transition">
-                        <i class="fas fa-newspaper mr-2 text-red-600"></i>Berita
-                    </a>
-                    <a href="{{ route('achievement.index') }}" class="text-gray-700 hover:text-red-600 hover:bg-red-50 block px-3 py-2 rounded-md text-base font-medium transition">
-                        <i class="fas fa-trophy mr-2 text-red-600"></i>Prestasi
-                    </a>
-                    <a href="{{ route('gallery.index') }}" class="text-gray-700 hover:text-red-600 hover:bg-red-50 block px-3 py-2 rounded-md text-base font-medium transition">
-                        <i class="fas fa-images mr-2 text-red-600"></i>Galeri
-                    </a>
-                    <a href="{{ route('teacher.index') }}" class="text-gray-700 hover:text-red-600 hover:bg-red-50 block px-3 py-2 rounded-md text-base font-medium transition">
-                        <i class="fas fa-chalkboard-user mr-2 text-red-600"></i>Guru
-                    </a>
-
-                    <!-- Mobile User Menu -->
-                    <div class="border-t border-gray-200 pt-2 mt-2 space-y-1">
-                        @auth
-                            <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-red-600 hover:bg-red-50 block px-3 py-2 rounded-md text-base font-medium transition">
-                                <i class="fas fa-user-circle mr-2 text-red-600"></i>{{ Auth::user()->name }}
-                            </a>
-                            <form action="{{ route('logout') }}" method="POST" class="block">
-                                @csrf
-                                <button type="submit" class="w-full text-left text-gray-700 hover:text-red-600 hover:bg-red-50 px-3 py-2 rounded-md text-base font-medium transition">
-                                    <i class="fas fa-sign-out-alt mr-2 text-red-600"></i>Logout
-                                </button>
-                            </form>
-                        @endauth
-                    </div>
-                </div>
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-2"
+                 @click.outside="open = false"
+                 class="md:hidden absolute left-4 right-4 top-[68px] bg-white rounded-2xl shadow-xl border border-gray-100 p-3 z-50">
+                @foreach([
+                    ['home','Beranda','fa-house'],
+                    ['news.index','Berita','fa-newspaper'],
+                    ['achievement.index','Prestasi','fa-trophy'],
+                    ['gallery.index','Galeri','fa-images'],
+                    ['teacher.index','Guru & Staff','fa-chalkboard-user'],
+                ] as [$route, $label, $icon])
+                <a href="{{ route($route) }}" @click="open = false"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
+                    <i class="fas {{ $icon }} w-4 text-red-500 text-sm"></i>{{ $label }}
+                </a>
+                @endforeach
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main>
-        @yield('content')
-    </main>
+    {{-- ======================== MAIN ======================== --}}
+    <main>@yield('content')</main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white mt-16">
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <!-- Grid Footer Content -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-                    <!-- About -->
-                    <div class="flex flex-col justify-between">
+    {{-- ======================== FOOTER ======================== --}}
+    <footer class="footer">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+
+                {{-- Brand --}}
+                <div>
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#2aad8c">
+                            <i class="fas fa-school text-white text-lg"></i>
+                        </div>
                         <div>
-                            <h3 class="text-lg font-bold text-red-500 mb-3 flex items-center">
-                                <i class="fas fa-school mr-2"></i> SD Negeri 1 Tengguli
-                            </h3>
-                            <p class="text-gray-400 text-sm leading-relaxed">
-                                Sekolah Dasar Negeri 1 Tengguli adalah lembaga pendidikan yang berkomitmen untuk mengembangkan potensi siswa secara optimal.
-                            </p>
+                            <div class="font-bold text-white text-sm">SD Negeri 1 Tengguli</div>
+                            <div class="text-xs text-white/50">Jawa Tengah, Indonesia</div>
                         </div>
                     </div>
-
-                    <!-- Contact -->
-                    <div>
-                        <h3 class="text-lg font-bold text-red-500 mb-3 flex items-center">
-                            <i class="fas fa-info-circle mr-2"></i> Kontak
-                        </h3>
-                        <div class="space-y-3 text-sm text-gray-400">
-                            <div class="flex items-start space-x-3 hover:text-red-400 transition">
-                                <i class="fas fa-map-marker-alt text-red-500 mt-1 flex-shrink-0"></i>
-                                <p>Tengguli, Jawa Tengah, Indonesia</p>
-                            </div>
-                            <div class="flex items-start space-x-3 hover:text-red-400 transition">
-                                <i class="fas fa-phone text-red-500 mt-1 flex-shrink-0"></i>
-                                <p>(0274) 123456</p>
-                            </div>
-                            <div class="flex items-start space-x-3 hover:text-red-400 transition">
-                                <i class="fas fa-envelope text-red-500 mt-1 flex-shrink-0"></i>
-                                <p>info@sd1tengguli.sch.id</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Social Media & Links -->
-                    <div>
-                        <h3 class="text-lg font-bold text-red-500 mb-3 flex items-center">
-                            <i class="fas fa-share-alt mr-2"></i> Ikuti Kami
-                        </h3>
-                        <div class="flex flex-wrap gap-3 mb-6">
-                            <a href="#" target="_blank" class="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center transition transform hover:scale-110" title="Facebook">
-                                <i class="fab fa-facebook-f text-white"></i>
-                            </a>
-                            <a href="#" target="_blank" class="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center transition transform hover:scale-110" title="Instagram">
-                                <i class="fab fa-instagram text-white"></i>
-                            </a>
-                            <a href="#" target="_blank" class="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center transition transform hover:scale-110" title="Twitter">
-                                <i class="fab fa-twitter text-white"></i>
-                            </a>
-                            <a href="#" target="_blank" class="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center transition transform hover:scale-110" title="YouTube">
-                                <i class="fab fa-youtube text-white"></i>
-                            </a>
-                        </div>
-                        <div class="bg-gray-800 rounded-lg p-3 text-center text-xs text-gray-400 hover:bg-gray-700 transition">
-                            <p>Hubungi kami untuk informasi lebih lanjut</p>
-                        </div>
-                    </div>
-
-                    <!-- Mini Map -->
-                    <div>
-                        <h3 class="text-lg font-bold text-red-500 mb-3 flex items-center">
-                            <i class="fas fa-map mr-2"></i> Lokasi
-                        </h3>
-                        <div id="footer-map" class="w-full h-56 rounded-lg shadow-lg border-2 border-red-600"></div>
+                    <p class="text-white/60 text-sm leading-relaxed mb-5">
+                        Lembaga pendidikan yang berkomitmen mengembangkan potensi siswa dengan pendidikan berkarakter dan berwawasan luas.
+                    </p>
+                    <div class="flex gap-2">
+                        <a href="#" class="social-btn"><i class="fab fa-facebook-f text-sm"></i></a>
+                        <a href="#" class="social-btn"><i class="fab fa-instagram text-sm"></i></a>
+                        <a href="#" class="social-btn"><i class="fab fa-youtube text-sm"></i></a>
+                        <a href="#" class="social-btn"><i class="fab fa-whatsapp text-sm"></i></a>
                     </div>
                 </div>
 
-                <!-- Divider -->
-                <div class="border-t border-gray-700 pt-6 mt-8">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center sm:text-left text-sm text-gray-400">
-                        <p>&copy; 2026 SD Negeri 1 Tengguli. All rights reserved.</p>
-                        <div class="flex justify-center sm:justify-end space-x-4">
-                            <a href="#" class="hover:text-red-500 transition">Privacy Policy</a>
-                            <a href="#" class="hover:text-red-500 transition">Terms of Service</a>
-                        </div>
+                {{-- Navigasi --}}
+                <div>
+                    <div class="footer-title">Navigasi</div>
+                    <div class="space-y-2.5">
+                        @foreach([
+                            ['home','Beranda'],
+                            ['news.index','Berita & Informasi'],
+                            ['achievement.index','Prestasi Siswa'],
+                            ['gallery.index','Galeri Foto'],
+                            ['teacher.index','Guru & Staff'],
+                        ] as [$r,$l])
+                        <a href="{{ route($r) }}" class="footer-link block">
+                            <i class="fas fa-chevron-right text-xs text-red-500"></i>{{ $l }}
+                        </a>
+                        @endforeach
                     </div>
+                </div>
+
+                {{-- Kontak --}}
+                <div>
+                    <div class="footer-title">Kontak Kami</div>
+                    <div class="space-y-4">
+                        @foreach([
+                            ['fa-map-marker-alt','Tengguli, Jawa Tengah, Indonesia'],
+                            ['fa-phone','(0274) 123-456'],
+                            ['fa-envelope','info@sd1tengguli.sch.id'],
+                            ['fa-clock','Sen–Jum: 07.00–14.00 WIB'],
+                        ] as [$icon,$text])
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                                 style="background:rgba(42,173,140,.15)">
+                                <i class="fas {{ $icon }} text-red-400 text-xs"></i>
+                            </div>
+                            <p class="text-white/60 text-sm leading-relaxed pt-1">{{ $text }}</p>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Map --}}
+                <div>
+                    <div class="footer-title">Lokasi Kami</div>
+                    <div id="footer-map" class="w-full rounded-xl overflow-hidden" style="height:180px;background:#0d5c4a"></div>
+                </div>
+            </div>
+
+            <div class="pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <p class="text-white/40 text-sm">&copy; {{ date('Y') }} SD Negeri 1 Tengguli. Hak cipta dilindungi.</p>
+                <div class="flex items-center gap-5">
+                    <a href="#" class="text-white/40 hover:text-white text-sm transition-colors">Kebijakan Privasi</a>
+                    <a href="#" class="text-white/40 hover:text-white text-sm transition-colors">Syarat Layanan</a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
+    {{-- Scripts --}}
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Website SD Negeri 1 Tengguli loaded');
-            
-            // Initialize Footer Map
-            if (document.getElementById('footer-map')) {
-                // Koordinat SD Negeri 1 Tengguli (Tengguli, Jawa Tengah)
-                const schoolLat = -7.8056;
-                const schoolLng = 110.4158;
-                
-                // Create map with minimal controls
-                const footerMap = L.map('footer-map', {
-                    zoomControl: true,
-                    scrollWheelZoom: false
-                }).setView([schoolLat, schoolLng], 13);
-                
-                // Add OpenStreetMap tiles
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap',
-                    maxZoom: 19
-                }).addTo(footerMap);
-                
-                // Add marker for school
-                const marker = L.marker([schoolLat, schoolLng], {
-                    icon: L.icon({
-                        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        shadowSize: [41, 41],
-                        iconAnchor: [12, 41],
-                        shadowAnchor: [12, 41],
-                        popupAnchor: [1, -34]
-                    })
-                }).addTo(footerMap);
-                
-                marker.bindPopup(
-                    '<div class="text-sm">' +
-                    '<div class="font-bold text-red-600">SD Negeri 1 Tengguli</div>' +
-                    '<p class="text-gray-700">Tengguli, Jawa Tengah</p>' +
-                    '</div>', 
-                    {maxWidth: 250, className: 'custom-popup'}
-                ).openPopup();
-                
-                // Handle responsive map resize
-                window.addEventListener('resize', function() {
-                    footerMap.invalidateSize();
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // ---------- Scroll Progress ----------
+        const bar = document.getElementById('progress-bar');
+        if (bar) {
+            window.addEventListener('scroll', () => {
+                const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+                bar.style.width = pct + '%';
+            });
+        }
+
+        // ---------- Navbar scroll state ----------
+        const nav = document.getElementById('navbar');
+        const navTitle = document.getElementById('nav-title');
+        const navSub   = document.getElementById('nav-sub');
+        const navBurger= document.getElementById('nav-hamburger');
+
+        const applyNav = () => {
+            const scrolled = window.scrollY > 60;
+            if (scrolled) {
+                nav.classList.add('scrolled');
+                if (navTitle) { navTitle.style.color = '#111827'; }
+                if (navSub)   { navSub.style.color = '#6b7280'; }
+                if (navBurger){ navBurger.style.color = '#111827'; }
+            } else {
+                nav.classList.remove('scrolled');
+                if (navTitle) { navTitle.style.color = '#fff'; }
+                if (navSub)   { navSub.style.color = 'rgba(255,255,255,.7)'; }
+                if (navBurger){ navBurger.style.color = '#fff'; }
+            }
+        };
+        applyNav();
+        window.addEventListener('scroll', applyNav);
+
+        // ---------- Scroll Reveal ----------
+        const ro = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { e.target.classList.add('revealed'); ro.unobserve(e.target); }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+        document.querySelectorAll('[data-reveal]').forEach(el => ro.observe(el));
+
+        const rg = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const children = entry.target.children;
+                Array.from(children).forEach((child, i) => {
+                    setTimeout(() => child.classList.add('revealed'), i * 100);
                 });
-            }
+                rg.unobserve(entry.target);
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('[data-reveal-group]').forEach(el => rg.observe(el));
+
+        // ---------- Animated Counters ----------
+        const co = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                const el = e.target;
+                const target = +el.dataset.target || 0;
+                const suffix = el.dataset.suffix || '';
+                const duration = 1600;
+                const step = target / (duration / 16);
+                let cur = 0;
+                const timer = setInterval(() => {
+                    cur = Math.min(cur + step, target);
+                    el.textContent = Math.floor(cur).toLocaleString('id') + suffix;
+                    if (cur >= target) clearInterval(timer);
+                }, 16);
+                co.unobserve(el);
+            });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('[data-counter]').forEach(el => co.observe(el));
+
+        // ---------- Typed text ----------
+        document.querySelectorAll('[data-typed]').forEach(el => {
+            const words = JSON.parse(el.dataset.typed || '[]');
+            if (!words.length) return;
+            let i = 0, w = 0, del = false;
+            const run = () => {
+                const word = words[w % words.length];
+                el.textContent = del ? word.substring(0, i--) : word.substring(0, i++);
+                let delay = del ? 50 : 110;
+                if (!del && i > word.length)  { delay = 2000; del = true; }
+                if (del  && i < 0)             { del = false; w++; delay = 400; i = 0; }
+                setTimeout(run, delay);
+            };
+            run();
         });
+
+        // ---------- Footer Map ----------
+        const mapEl = document.getElementById('footer-map');
+        if (mapEl && window.L) {
+            const lat = -7.8056, lng = 110.4158;
+            const map = L.map('footer-map', { zoomControl: true, scrollWheelZoom: false }).setView([lat, lng], 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap', maxZoom: 19
+            }).addTo(map);
+            const icon = L.divIcon({
+                html: `<div style="width:32px;height:32px;background:#2aad8c;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 4px 12px rgba(42,173,140,.5)"><i class="fas fa-school" style="color:#fff;transform:rotate(45deg);font-size:11px"></i></div>`,
+                className: '', iconSize: [32,32], iconAnchor: [16,32], popupAnchor: [0,-36]
+            });
+            L.marker([lat, lng], { icon }).addTo(map)
+             .bindPopup('<strong style="color:#dc2626">SD Negeri 1 Tengguli</strong><br><small>Tengguli, Jawa Tengah</small>')
+             .openPopup();
+        }
+
+    });
     </script>
-    
-    <style>
-        #footer-map {
-            background-color: #f0f0f0;
-        }
-        
-        .custom-popup .leaflet-popup-content-wrapper {
-            background-color: white;
-            border-radius: 8px;
-        }
-        
-        .custom-popup .leaflet-popup-tip {
-            background-color: white;
-        }
-        
-        /* Responsive map styling */
-        @media (max-width: 640px) {
-            #footer-map {
-                height: 200px !important;
-            }
-        }
-        
-        @media (min-width: 1024px) {
-            #footer-map {
-                height: 224px !important;
-            }
-        }
-    </style>
+
+    @stack('scripts')
 </body>
 </html>

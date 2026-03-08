@@ -37,6 +37,7 @@ Route::get('/{slug}', [PageController::class, 'show'])->name('page.show');
 
 // Protected Admin Routes
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+    Route::redirect('/', '/admin/dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('/news', AdminNewsController::class);
     Route::resource('/announcements', AnnouncementController::class);

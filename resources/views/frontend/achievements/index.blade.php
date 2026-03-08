@@ -1,57 +1,88 @@
 @extends('layouts.app')
-
 @section('title', 'Prestasi - SD Negeri 1 Tengguli')
 
 @section('content')
-<!-- Hero -->
-<div class="bg-gradient-to-r from-red-600 to-red-700 text-white py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">Prestasi Siswa</h1>
-        <p class="text-xl">Pencapaian gemilang siswa-siswi SD Negeri 1 Tengguli</p>
+
+<div class="page-hero">
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="breadcrumb mb-5">
+            <a href="{{ route('home') }}">Beranda</a>
+            <span>/</span>
+            <span class="text-white">Prestasi</span>
+        </nav>
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-white mb-2">Prestasi Siswa</h1>
+        <p class="text-white/60 text-lg">Pencapaian gemilang kebanggaan SD Negeri 1 Tengguli</p>
     </div>
 </div>
 
-<!-- Content -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <!-- Filter -->
-    <div class="mb-12 flex flex-wrap gap-3 justify-center">
-        <a href="{{ route('achievement.index') }}" class="px-6 py-2 rounded-full {{ !request('category') ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700' }} font-semibold">Semua</a>
-        @foreach($achievements_by_category as $cat => $items)
-            <a href="{{ route('achievement.filter', $cat) }}" class="px-6 py-2 rounded-full {{ request('category') === $cat ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700' }} font-semibold capitalize">{{ $cat }}</a>
-        @endforeach
+{{-- Category filter tabs --}}
+<div class="bg-white border-b border-gray-100 sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex gap-2 overflow-x-auto py-4 scrollbar-none">
+            <a href="{{ route('achievement.index') }}"
+               class="flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold transition-colors
+                      {{ !request()->segment(2) ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600' }}">
+                Semua
+            </a>
+            @foreach($achievements_by_category as $cat => $items)
+            <a href="{{ route('achievement.filter', $cat) }}"
+               class="flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold capitalize transition-colors
+                      {{ request()->segment(2) === $cat ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600' }}">
+                {{ $cat }}
+                <span class="ml-1 opacity-60 text-xs">({{ count($items) }})</span>
+            </a>
+            @endforeach
+        </div>
     </div>
+</div>
 
-    <!-- Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        @forelse($achievements as $achievement)
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
-                @if($achievement->achievement_image)
-                    <img src="{{ asset('storage/' . $achievement->achievement_image) }}" alt="{{ $achievement->title }}" class="w-full h-48 object-cover">
-                @else
-                    <div class="w-full h-48 bg-gradient-to-r from-yellow-300 to-yellow-500 flex items-center justify-center">
-                        <i class="fas fa-trophy text-yellow-600 text-4xl"></i>
-                    </div>
-                @endif
-                <div class="p-6">
-                    <span class="inline-block bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-semibold mb-3 capitalize">
-                        {{ $achievement->category }}
-                    </span>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $achievement->title }}</h3>
-                    <p class="text-gray-600 text-sm mb-2">📌 {{ $achievement->student_name ?? 'Siswa SD 1 Tengguli' }}</p>
-                    @if($achievement->description)
-                        <p class="text-gray-600 text-sm mb-4">{{ Str::limit($achievement->description, 100) }}</p>
-                    @endif
-                    <p class="text-gray-500 text-xs">🗓️ {{ $achievement->achievement_date->format('d M Y') }}</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
+        @forelse($achievements as $ach)
+        <div class="achievement-card">
+            <div class="flex items-start gap-4">
+                <div class="trophy-icon flex-shrink-0">
+                    <i class="fas fa-medal text-yellow-600 text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <span class="badge badge-red mb-2 capitalize">{{ $ach->category }}</span>
+                    <h3 class="font-bold text-gray-900 text-sm line-clamp-2">{{ $ach->title }}</h3>
                 </div>
             </div>
+
+            @if($ach->achievement_image)
+            <div class="mt-4 rounded-xl overflow-hidden" style="height:140px">
+                <img src="{{ asset('storage/'.$ach->achievement_image) }}" alt="{{ $ach->title }}"
+                     class="w-full h-full object-cover">
+            </div>
+            @endif
+
+            @if($ach->description)
+            <p class="text-gray-500 text-xs mt-3 line-clamp-2 leading-relaxed">
+                {{ Str::limit($ach->description, 100) }}
+            </p>
+            @endif
+
+            <div class="flex items-center gap-3 mt-4 pt-3 border-t border-gray-100 text-xs text-gray-400">
+                @if($ach->student_name)
+                <span class="flex items-center gap-1">
+                    <i class="fas fa-user text-red-400"></i>{{ $ach->student_name }}
+                </span>
+                @endif
+                <span class="flex items-center gap-1 ml-auto">
+                    <i class="fas fa-calendar text-red-400"></i>
+                    {{ $ach->achievement_date->format('d M Y') }}
+                </span>
+            </div>
+        </div>
         @empty
-            <p class="text-center text-gray-600 col-span-full py-12">Belum ada prestasi</p>
+        <div class="col-span-3 text-center py-20 text-gray-400">
+            <i class="fas fa-trophy text-6xl mb-4 opacity-20"></i>
+            <p class="text-lg">Belum ada prestasi</p>
+        </div>
         @endforelse
     </div>
 
-    <!-- Pagination -->
-    <div class="mt-12">
-        {{ $achievements->links() }}
-    </div>
+    <div class="mt-12 flex justify-center">{{ $achievements->links() }}</div>
 </div>
 @endsection
