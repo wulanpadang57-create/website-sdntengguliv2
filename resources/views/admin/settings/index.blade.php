@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 @section('title','Pengaturan Sekolah')
 @section('breadcrumb')Pengaturan@endsection
+@php use App\Models\Teacher; use App\Models\Achievement; @endphp
 
 @section('content')
 <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
@@ -19,6 +20,16 @@
                     <div class="form-group">
                         <label class="form-label">Nama Kepala Sekolah</label>
                         <input type="text" name="principal_name" class="form-input" value="{{ \App\Models\Setting::get('principal_name') }}">
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                        <div class="form-group">
+                            <label class="form-label">Kota / Kabupaten</label>
+                            <input type="text" name="school_city" class="form-input" value="{{ \App\Models\Setting::get('school_city', 'Kab. Jepara, Jawa Tengah') }}" placeholder="Kab. Jepara, Jawa Tengah">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Akreditasi</label>
+                            <input type="text" name="school_accreditation" class="form-input" value="{{ \App\Models\Setting::get('school_accreditation', 'A') }}" placeholder="A">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Alamat</label>
@@ -100,6 +111,31 @@
                     <div class="form-group">
                         <label class="form-label">Koordinat Longitude</label>
                         <input type="text" name="school_lng" class="form-input" value="{{ \App\Models\Setting::get('school_lng') }}" placeholder="106.12345">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-chart-bar" style="color:#2aad8c;margin-right:.5rem"></i>Statistik Beranda</h3></div>
+                <div class="card-body">
+                    <p style="font-size:.8rem;color:#9ca3af;margin-bottom:1rem">Angka yang ditampilkan di section statistik halaman utama.</p>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-users" style="margin-right:.4rem;color:#2aad8c"></i>Jumlah Siswa Aktif</label>
+                            <input type="number" name="students_count" class="form-input" value="{{ \App\Models\Setting::get('students_count', 500) }}" min="0" placeholder="500">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-calendar-check" style="margin-right:.4rem;color:#2aad8c"></i>Tahun Berdiri</label>
+                            <input type="number" name="founded_year" class="form-input" value="{{ \App\Models\Setting::get('founded_year', 1999) }}" min="1900" max="2100" placeholder="1999">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="color:#9ca3af"><i class="fas fa-chalkboard-teacher" style="margin-right:.4rem"></i>Guru (otomatis dari data)</label>
+                            <input type="text" class="form-input" value="{{ \App\Models\Teacher::count() }} guru terdaftar" disabled style="background:#f9fafb;color:#6b7280">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="color:#9ca3af"><i class="fas fa-trophy" style="margin-right:.4rem"></i>Prestasi (otomatis dari data)</label>
+                            <input type="text" class="form-input" value="{{ \App\Models\Achievement::count() }} prestasi terdaftar" disabled style="background:#f9fafb;color:#6b7280">
+                        </div>
                     </div>
                 </div>
             </div>

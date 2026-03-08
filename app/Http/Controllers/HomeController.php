@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\News;
 use App\Models\Announcement;
 use App\Models\Achievement;
+use App\Models\Gallery;
 use App\Models\Slider;
 use App\Models\Teacher;
 use App\Models\Visitor;
@@ -40,6 +41,13 @@ class HomeController extends Controller
             ->get();
         $teachers = Teacher::limit(3)->get();
 
-        return view('frontend.index', compact('sliders', 'announcements', 'recentNews', 'achievements', 'teachers'));
+        $heroStats = [
+            'teachers'     => Teacher::count(),
+            'achievements' => Achievement::count(),
+            'news'         => News::where('status','published')->count(),
+            'galleries'    => Gallery::count(),
+        ];
+
+        return view('frontend.index', compact('sliders', 'announcements', 'recentNews', 'achievements', 'teachers', 'heroStats'));
     }
 }

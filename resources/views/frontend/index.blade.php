@@ -2,6 +2,13 @@
 @section('title', 'Beranda - SD Negeri 1 Tengguli')
 
 @section('content')
+@php
+    $studentsCount = (int) \App\Models\Setting::get('students_count', 500);
+    $foundedYear   = (int) \App\Models\Setting::get('founded_year', 1999);
+    $yearsOld      = date('Y') - $foundedYear;
+    $teacherCount  = \App\Models\Teacher::count();
+    $achieveCount  = \App\Models\Achievement::count();
+@endphp
 
 {{-- ================================================================
      HERO
@@ -42,7 +49,10 @@
 
     {{-- Content --}}
     <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div class="max-w-2xl">
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-10">
+
+        {{-- LEFT –– Text --}}
+        <div class="flex-1">
             <div class="mb-5">
                 <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold text-white/80 border border-white/20"
                       style="background:rgba(255,255,255,.08);backdrop-filter:blur(8px)">
@@ -74,6 +84,72 @@
                 </a>
             </div>
         </div>
+
+        {{-- RIGHT –– Floating stats card --}}
+        <div class="hero-right-panel">
+            @php
+                $heroSchoolName  = \App\Models\Setting::get('school_name', 'SD Negeri 1 Tengguli');
+                $heroCity        = \App\Models\Setting::get('school_city', 'Kab. Jepara, Jawa Tengah');
+                $heroAccred      = \App\Models\Setting::get('school_accreditation', 'A');
+            @endphp
+            {{-- Top card: school badge --}}
+            <div class="rounded-2xl p-5 flex items-center gap-4"
+                 style="background:rgba(255,255,255,.18);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.35);box-shadow:0 8px 32px rgba(0,0,0,.15)">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
+                     style="background:rgba(45,200,150,.4);border:1px solid rgba(45,200,150,.5)">
+                    <i class="fas fa-school text-2xl" style="color:#fff"></i>
+                </div>
+                <div>
+                    <p class="text-white font-extrabold text-base leading-tight">{{ $heroSchoolName }}</p>
+                    <p class="text-white/70 text-xs mt-0.5">{{ $heroCity }}</p>
+                    @if($heroAccred)
+                    <span class="inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold"
+                          style="background:#2aad8c;color:#fff">Akreditasi {{ $heroAccred }}</span>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Stats grid — same data as the stats bar --}}
+            <div class="grid grid-cols-2 gap-3">
+                <div class="rounded-2xl p-4 text-center"
+                     style="background:rgba(255,255,255,.15);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.25)">
+                    <p class="text-white font-extrabold text-3xl">{{ $studentsCount }}+</p>
+                    <p class="text-white/70 text-xs mt-1 font-medium"><i class="fas fa-users mr-1"></i>Siswa Aktif</p>
+                </div>
+                <div class="rounded-2xl p-4 text-center"
+                     style="background:rgba(255,255,255,.15);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.25)">
+                    <p class="text-white font-extrabold text-3xl">{{ $teacherCount }}+</p>
+                    <p class="text-white/70 text-xs mt-1 font-medium"><i class="fas fa-chalkboard-teacher mr-1"></i>Pengajar</p>
+                </div>
+                <div class="rounded-2xl p-4 text-center"
+                     style="background:rgba(255,255,255,.15);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.25)">
+                    <p class="text-white font-extrabold text-3xl">{{ $achieveCount }}+</p>
+                    <p class="text-white/70 text-xs mt-1 font-medium"><i class="fas fa-trophy mr-1"></i>Prestasi</p>
+                </div>
+                <div class="rounded-2xl p-4 text-center"
+                     style="background:rgba(255,255,255,.15);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.25)">
+                    <p class="text-white font-extrabold text-3xl">{{ $yearsOld }}+</p>
+                    <p class="text-white/70 text-xs mt-1 font-medium"><i class="fas fa-calendar-check mr-1"></i>Tahun Berdiri</p>
+                </div>
+            </div>
+
+            {{-- CTA card --}}
+            <a href="{{ route('teacher.index') }}"
+               class="rounded-2xl p-4 flex items-center gap-3 transition-all hover:scale-[1.02]"
+               style="background:linear-gradient(135deg,rgba(42,173,140,.5),rgba(31,138,111,.6));backdrop-filter:blur(20px);border:1px solid rgba(45,200,150,.6);box-shadow:0 4px 20px rgba(42,173,140,.3)">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                     style="background:rgba(255,255,255,.2)">
+                    <i class="fas fa-users" style="color:#fff"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-white font-bold text-sm">Kenali Guru Kami</p>
+                    <p class="text-white/70 text-xs">Tim pengajar berpengalaman</p>
+                </div>
+                <i class="fas fa-arrow-right text-sm text-white"></i>
+            </a>
+        </div>
+
+        </div>{{-- end flex row --}}
     </div>
 
     {{-- Slide dots --}}
@@ -113,17 +189,17 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
             @foreach([
-                ['fa-users','500+','500','Siswa Aktif',''],
-                ['fa-chalkboard-user','25+','25','Guru Profesional',''],
-                ['fa-trophy','200+','200','Prestasi',''],
-                ['fa-calendar-check','25+','25','Tahun Berdiri',''],
+                ['fa-users',        $studentsCount, $studentsCount, 'Siswa Aktif',      '+'],
+                ['fa-chalkboard-user', $teacherCount, $teacherCount, 'Guru Profesional', '+'],
+                ['fa-trophy',       $achieveCount,  $achieveCount,  'Prestasi',         '+'],
+                ['fa-calendar-check', $yearsOld,    $yearsOld,      'Tahun Berdiri',    '+'],
             ] as [$icon,$display,$num,$label,$suffix])
             <div class="stat-card text-center">
                 <div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4" style="background:rgba(42,173,140,.15);border:1px solid rgba(42,173,140,.3)">
                     <i class="fas {{ $icon }} text-xl" style="color:#5DCFB3"></i>
                 </div>
                 <div class="text-3xl font-extrabold text-white mb-1">
-                    <span data-counter data-target="{{ $num }}" data-suffix="+">{{ $display }}</span>
+                    <span data-counter data-target="{{ $num }}" data-suffix="+">{{ $display }}+</span>
                 </div>
                 <div class="text-white/60 text-sm font-medium">{{ $label }}</div>
             </div>

@@ -31,7 +31,9 @@ class SettingController extends Controller
             'maps_embed' => 'nullable|string',
             'school_lat' => 'nullable|string|max:30',
             'school_lng' => 'nullable|string|max:30',
-        ]);
+            'students_count' => 'nullable|integer|min:0',
+            'founded_year'   => 'nullable|integer|min:1900|max:2100',            'school_city'          => 'nullable|string|max:100',
+            'school_accreditation' => 'nullable|string|max:10',        ]);
 
         foreach ($validated as $key => $value) {
             if ($key !== 'school_logo') {
