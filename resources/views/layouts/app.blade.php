@@ -24,7 +24,7 @@
 
                 {{-- Logo --}}
                 <a href="{{ route('home') }}" class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center flex-shrink-0">
+                    <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:var(--primary)">
                         <i class="fas fa-school text-white text-sm"></i>
                     </div>
                     <div class="leading-tight">
@@ -76,8 +76,11 @@
                     ['teacher.index','Guru & Staff','fa-chalkboard-user'],
                 ] as [$route, $label, $icon])
                 <a href="{{ route($route) }}" @click="open = false"
-                   class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
-                    <i class="fas {{ $icon }} w-4 text-red-500 text-sm"></i>{{ $label }}
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-gray-700 transition-colors"
+                   style="{{ request()->routeIs($route) ? 'background:#edfaf7;color:#1f8a6f' : '' }}"
+                   onmouseover="this.style.background='#edfaf7';this.style.color='#1f8a6f'"
+                   onmouseout="this.style.background='{{ request()->routeIs($route) ? '#edfaf7' : '' }}';this.style.color='{{ request()->routeIs($route) ? '#1f8a6f' : '' }}'">
+                    <i class="fas {{ $icon }} w-4 text-sm" style="color:var(--primary)"></i>{{ $label }}
                 </a>
                 @endforeach
             </div>
@@ -89,6 +92,15 @@
 
     {{-- ======================== FOOTER ======================== --}}
     <footer class="footer">
+        @php
+            $footerName    = \App\Models\Setting::get('school_name', 'SD Negeri 1 Tengguli');
+            $footerAddr    = \App\Models\Setting::get('school_address', 'Tengguli, Jawa Tengah');
+            $footerPhone   = \App\Models\Setting::get('school_phone', '—');
+            $footerEmail   = \App\Models\Setting::get('school_email', '—');
+            $footerFb      = \App\Models\Setting::get('facebook_url', '#');
+            $footerIg      = \App\Models\Setting::get('instagram_url', '#');
+            $footerYt      = \App\Models\Setting::get('youtube_url', '#');
+        @endphp
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
 
@@ -99,7 +111,7 @@
                             <i class="fas fa-school text-white text-lg"></i>
                         </div>
                         <div>
-                            <div class="font-bold text-white text-sm">SD Negeri 1 Tengguli</div>
+                            <div class="font-bold text-white text-sm">{{ $footerName }}</div>
                             <div class="text-xs text-white/50">Jawa Tengah, Indonesia</div>
                         </div>
                     </div>
@@ -107,10 +119,12 @@
                         Lembaga pendidikan yang berkomitmen mengembangkan potensi siswa dengan pendidikan berkarakter dan berwawasan luas.
                     </p>
                     <div class="flex gap-2">
-                        <a href="#" class="social-btn"><i class="fab fa-facebook-f text-sm"></i></a>
-                        <a href="#" class="social-btn"><i class="fab fa-instagram text-sm"></i></a>
-                        <a href="#" class="social-btn"><i class="fab fa-youtube text-sm"></i></a>
-                        <a href="#" class="social-btn"><i class="fab fa-whatsapp text-sm"></i></a>
+                        <a href="{{ $footerFb }}" class="social-btn" target="_blank"><i class="fab fa-facebook-f text-sm"></i></a>
+                        <a href="{{ $footerIg }}" class="social-btn" target="_blank"><i class="fab fa-instagram text-sm"></i></a>
+                        <a href="{{ $footerYt }}" class="social-btn" target="_blank"><i class="fab fa-youtube text-sm"></i></a>
+                        @if($footerPhone !== '—')
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/','',$footerPhone) }}" class="social-btn" target="_blank"><i class="fab fa-whatsapp text-sm"></i></a>
+                        @endif
                     </div>
                 </div>
 
@@ -126,7 +140,7 @@
                             ['teacher.index','Guru & Staff'],
                         ] as [$r,$l])
                         <a href="{{ route($r) }}" class="footer-link block">
-                            <i class="fas fa-chevron-right text-xs text-red-500"></i>{{ $l }}
+                            <i class="fas fa-chevron-right text-xs" style="color:var(--primary)"></i>{{ $l }}
                         </a>
                         @endforeach
                     </div>
@@ -136,27 +150,45 @@
                 <div>
                     <div class="footer-title">Kontak Kami</div>
                     <div class="space-y-4">
-                        @foreach([
-                            ['fa-map-marker-alt','Tengguli, Jawa Tengah, Indonesia'],
-                            ['fa-phone','(0274) 123-456'],
-                            ['fa-envelope','info@sd1tengguli.sch.id'],
-                            ['fa-clock','Sen–Jum: 07.00–14.00 WIB'],
-                        ] as [$icon,$text])
                         <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                                 style="background:rgba(42,173,140,.15)">
-                                <i class="fas {{ $icon }} text-red-400 text-xs"></i>
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(42,173,140,.15)">
+                                <i class="fas fa-map-marker-alt text-xs" style="color:var(--primary)"></i>
                             </div>
-                            <p class="text-white/60 text-sm leading-relaxed pt-1">{{ $text }}</p>
+                            <p class="text-white/60 text-sm leading-relaxed pt-1">{{ $footerAddr }}</p>
                         </div>
-                        @endforeach
+                        @if($footerPhone !== '—')
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(42,173,140,.15)">
+                                <i class="fas fa-phone text-xs" style="color:var(--primary)"></i>
+                            </div>
+                            <a href="tel:{{ $footerPhone }}" class="text-white/60 text-sm pt-1 hover:text-white transition-colors">{{ $footerPhone }}</a>
+                        </div>
+                        @endif
+                        @if($footerEmail !== '—')
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(42,173,140,.15)">
+                                <i class="fas fa-envelope text-xs" style="color:var(--primary)"></i>
+                            </div>
+                            <a href="mailto:{{ $footerEmail }}" class="text-white/60 text-sm pt-1 hover:text-white transition-colors">{{ $footerEmail }}</a>
+                        </div>
+                        @endif
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(42,173,140,.15)">
+                                <i class="fas fa-clock text-xs" style="color:var(--primary)"></i>
+                            </div>
+                            <p class="text-white/60 text-sm leading-relaxed pt-1">Sen–Jum: 07.00–14.00 WIB</p>
+                        </div>
                     </div>
                 </div>
 
                 {{-- Map --}}
                 <div>
                     <div class="footer-title">Lokasi Kami</div>
-                    <div id="footer-map" class="w-full rounded-xl overflow-hidden" style="height:180px;background:#0d5c4a"></div>
+                    <div id="footer-map"
+                         data-lat="{{ \App\Models\Setting::get('school_lat', '-7.8056') }}"
+                         data-lng="{{ \App\Models\Setting::get('school_lng', '110.4158') }}"
+                         data-name="{{ \App\Models\Setting::get('school_name', 'SD Negeri 1 Tengguli') }}"
+                         class="w-full rounded-xl overflow-hidden" style="height:180px;background:#0d5c4a"></div>
                 </div>
             </div>
 
@@ -269,8 +301,10 @@
         // ---------- Footer Map ----------
         const mapEl = document.getElementById('footer-map');
         if (mapEl && window.L) {
-            const lat = -7.8056, lng = 110.4158;
-            const map = L.map('footer-map', { zoomControl: true, scrollWheelZoom: false }).setView([lat, lng], 14);
+            const lat = parseFloat(mapEl.dataset.lat) || -7.8056;
+            const lng = parseFloat(mapEl.dataset.lng) || 110.4158;
+            const schoolName = mapEl.dataset.name || 'SD Negeri 1 Tengguli';
+            const map = L.map('footer-map', { zoomControl: true, scrollWheelZoom: false }).setView([lat, lng], 16);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap', maxZoom: 19
             }).addTo(map);
@@ -279,7 +313,7 @@
                 className: '', iconSize: [32,32], iconAnchor: [16,32], popupAnchor: [0,-36]
             });
             L.marker([lat, lng], { icon }).addTo(map)
-             .bindPopup('<strong style="color:#dc2626">SD Negeri 1 Tengguli</strong><br><small>Tengguli, Jawa Tengah</small>')
+             .bindPopup(`<strong style="color:#2aad8c">${schoolName}</strong>`)
              .openPopup();
         }
 

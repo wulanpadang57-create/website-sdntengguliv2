@@ -61,3 +61,6 @@
     </div>
 </form>
 @endsection
+@push('scripts')
+<script>function previewImg(i){if(i.files&&i.files[0]){const r=new FileReader();r.onload=e=>{document.getElementById('imgPreview').src=e.target.result;document.getElementById('imgPreviewBox').style.display='block'};r.readAsDataURL(i.files[0])}}</script>
+@endpush

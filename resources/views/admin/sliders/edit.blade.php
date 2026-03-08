@@ -1,53 +1,70 @@
 @extends('layouts.admin')
-
-@section('title', 'Edit Banner')
+@section('title','Edit Slider')
+@section('breadcrumb')<a href="{{ route('admin.sliders.index') }}">Slider</a> / Edit@endsection
 
 @section('content')
-<form action="{{ route('admin.sliders.update', $slider) }}" method="POST" enctype="multipart/form-data" class="max-w-3xl">
+<div style="max-width:720px">
+<form action="{{ route('admin.sliders.update', $slider) }}" method="POST" enctype="multipart/form-data">
     @csrf @method('PUT')
-    
-    <div class="bg-white rounded-lg shadow p-6 space-y-6">
-        <div>
-            <label class="block text-sm font-semibold text-gray-900 mb-2">Judul (Opsional)</label>
-            <input type="text" name="title" value="{{ $slider->title }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-        </div>
-
-        <div>
-            <label class="block text-sm font-semibold text-gray-900 mb-2">Gambar Banner</label>
-            @if($slider->image)
-                <div class="mb-4">
-                    <img src="{{ asset('storage/' . $slider->image) }}" alt="{{ $slider->title }}" class="w-full h-64 object-cover rounded">
+    <div style="display:flex;flex-direction:column;gap:1.25rem">
+        <div class="card">
+            <div class="card-header"><h3><i class="fas fa-images" style="color:#2aad8c;margin-right:.5rem"></i>Data Slider</h3></div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label">Judul <span style="color:#ef4444">*</span></label>
+                    <input type="text" name="title" class="form-input" value="{{ old('title', $slider->title) }}" required>
                 </div>
-            @endif
-            <input type="file" name="image" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-        </div>
-
-        <div>
-            <label class="block text-sm font-semibold text-gray-900 mb-2">Caption (Opsional)</label>
-            <textarea name="caption" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg">{{ $slider->caption }}</textarea>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-semibold text-gray-900 mb-2">Teks Tombol (Opsional)</label>
-                <input type="text" name="button_text" value="{{ $slider->button_text }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                <div class="form-group">
+                    <label class="form-label">Caption</label>
+                    <input type="text" name="caption" class="form-input" value="{{ old('caption', $slider->caption) }}">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                    <div class="form-group">
+                        <label class="form-label">Teks Tombol</label>
+                        <input type="text" name="button_text" class="form-input" value="{{ old('button_text', $slider->button_text) }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">URL Tombol</label>
+                        <input type="url" name="button_url" class="form-input" value="{{ old('button_url', $slider->button_url) }}">
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                    <div class="form-group">
+                        <label class="form-label">Urutan</label>
+                        <input type="number" name="order" class="form-input" value="{{ old('order', $slider->order ?? 0) }}" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select name="is_active" class="form-select">
+                            <option value="1" {{ $slider->is_active?'selected':'' }}>Aktif</option>
+                            <option value="0" {{ !$slider->is_active?'selected':'' }}>Nonaktif</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Gambar Slider</label>
+                    @if($slider->image)
+                    <div style="margin-bottom:.75rem">
+                        <img src="{{ asset('storage/'.$slider->image) }}" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px">
+                        <p style="font-size:.72rem;color:#9ca3af;margin-top:.3rem">Gambar saat ini. Upload baru untuk mengganti.</p>
+                    </div>
+                    @endif
+                    <input type="file" name="image" accept="image/*" class="form-input" onchange="previewImg(this)">
+                    <p style="font-size:.75rem;color:#9ca3af;margin-top:.3rem">Ukuran ideal: 1920×700 px</p>
+                    <div id="imgPreviewBox" style="display:none;margin-top:.75rem">
+                        <img id="imgPreview" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px">
+                    </div>
+                </div>
             </div>
-
-            <div>
-                <label class="block text-sm font-semibold text-gray-900 mb-2">URL Tombol (Opsional)</label>
-                <input type="url" name="button_url" value="{{ $slider->button_url }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-            </div>
         </div>
-
-        <div>
-            <label class="block text-sm font-semibold text-gray-900 mb-2">Aktif</label>
-            <input type="checkbox" name="is_active" value="1" {{ $slider->is_active ? 'checked' : '' }}> Tampilkan banner ini
-        </div>
-
-        <div class="pt-4 space-x-3">
-            <button type="submit" class="btn-primary">Update Banner</button>
-            <a href="{{ route('admin.sliders.index') }}" class="btn-secondary inline-block">Batal</a>
+        <div style="display:flex;gap:.75rem">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update Slider</button>
+            <a href="{{ route('admin.sliders.index') }}" class="btn btn-secondary">Batal</a>
         </div>
     </div>
 </form>
+</div>
 @endsection
+@push('scripts')
+<script>function previewImg(i){if(i.files&&i.files[0]){const r=new FileReader();r.onload=e=>{document.getElementById('imgPreview').src=e.target.result;document.getElementById('imgPreviewBox').style.display='block'};r.readAsDataURL(i.files[0])}}</script>
+@endpush

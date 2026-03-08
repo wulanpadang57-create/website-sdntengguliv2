@@ -1,47 +1,48 @@
 @extends('layouts.admin')
-
-@section('title', 'Edit User')
+@section('title','Edit Pengguna')
+@section('breadcrumb')<a href="{{ route('admin.users.index') }}">Pengguna</a> / Edit@endsection
 
 @section('content')
-<form action="{{ route('admin.users.update', $user) }}" method="POST" class="max-w-3xl">
+<div style="max-width:600px">
+<form action="{{ route('admin.users.update', $user) }}" method="POST">
     @csrf @method('PUT')
-    
-    <div class="bg-white rounded-lg shadow p-6 space-y-6">
-        <div>
-            <label class="block text-sm font-semibold text-gray-900 mb-2">Nama</label>
-            <input type="text" name="name" value="{{ $user->name }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
-        </div>
-
-        <div>
-            <label class="block text-sm font-semibold text-gray-900 mb-2">Email</label>
-            <input type="email" name="email" value="{{ $user->email }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-semibold text-gray-900 mb-2">Password Baru (Opsional)</label>
-                <input type="password" name="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Kosongkan jika tidak ingin mengubah">
+    <div style="display:flex;flex-direction:column;gap:1.25rem">
+        <div class="card">
+            <div class="card-header"><h3><i class="fas fa-user-edit" style="color:#2aad8c;margin-right:.5rem"></i>Data Akun Pengguna</h3></div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label">Nama Lengkap <span style="color:#ef4444">*</span></label>
+                    <input type="text" name="name" class="form-input" value="{{ old('name', $user->name) }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email <span style="color:#ef4444">*</span></label>
+                    <input type="email" name="email" class="form-input" value="{{ old('email', $user->email) }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password Baru</label>
+                    <input type="password" name="password" class="form-input" placeholder="Kosongkan jika tidak ingin mengubah">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Konfirmasi Password</label>
+                    <input type="password" name="password_confirmation" class="form-input" placeholder="Ulangi password baru">
+                </div>
+                @if(isset($roles) && count($roles))
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select name="role" class="form-select">
+                        @foreach($roles as $role)
+                        <option value="{{ $role }}" {{ (old('role') ?? ($user->role ?? ''))===$role?'selected':'' }}>{{ ucfirst($role) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @endif
             </div>
-
-            <div>
-                <label class="block text-sm font-semibold text-gray-900 mb-2">Konfirmasi Password</label>
-                <input type="password" name="password_confirmation" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-            </div>
         </div>
-
-        <div>
-            <label class="block text-sm font-semibold text-gray-900 mb-2">Role</label>
-            <select name="role" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
-                <option value="viewer" {{ $user->role === 'viewer' ? 'selected' : '' }}>Viewer</option>
-                <option value="editor" {{ $user->role === 'editor' ? 'selected' : '' }}>Editor</option>
-                <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
-            </select>
-        </div>
-
-        <div class="pt-4 space-x-3">
-            <button type="submit" class="btn-primary">Update User</button>
-            <a href="{{ route('admin.users.index') }}" class="btn-secondary inline-block">Batal</a>
+        <div style="display:flex;gap:.75rem">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update Akun</button>
+            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Batal</a>
         </div>
     </div>
 </form>
+</div>
 @endsection

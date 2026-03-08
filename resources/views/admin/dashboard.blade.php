@@ -1,108 +1,138 @@
-@extends('layouts.admin')
-
+﻿@extends('layouts.admin')
 @section('title', 'Dashboard')
 
 @section('content')
-<!-- Stats Cards -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-gray-500 text-sm font-semibold">Total Berita</p>
-                <p class="text-3xl font-bold text-gray-900">{{ $total_news }}</p>
-            </div>
-            <i class="fas fa-newspaper text-red-600 text-4xl opacity-20"></i>
+
+{{-- Stat Cards --}}
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.75rem">
+    <div class="card" style="padding:1.25rem;display:flex;align-items:center;gap:1rem;">
+        <div style="width:48px;height:48px;border-radius:12px;background:#edfaf7;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="fas fa-newspaper" style="color:#2aad8c;font-size:1.2rem"></i>
+        </div>
+        <div>
+            <div style="font-size:1.75rem;font-weight:800;color:#111827;line-height:1">{{ $total_news }}</div>
+            <div style="font-size:.78rem;color:#6b7280;font-weight:500;margin-top:2px">Total Berita</div>
         </div>
     </div>
-
-    <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-gray-500 text-sm font-semibold">Pengumuman</p>
-                <p class="text-3xl font-bold text-gray-900">{{ $total_announcements }}</p>
-            </div>
-            <i class="fas fa-bullhorn text-blue-600 text-4xl opacity-20"></i>
+    <div class="card" style="padding:1.25rem;display:flex;align-items:center;gap:1rem;">
+        <div style="width:48px;height:48px;border-radius:12px;background:#eff6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="fas fa-bullhorn" style="color:#3b82f6;font-size:1.2rem"></i>
+        </div>
+        <div>
+            <div style="font-size:1.75rem;font-weight:800;color:#111827;line-height:1">{{ $total_announcements }}</div>
+            <div style="font-size:.78rem;color:#6b7280;font-weight:500;margin-top:2px">Pengumuman</div>
         </div>
     </div>
-
-    <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-gray-500 text-sm font-semibold">Prestasi</p>
-                <p class="text-3xl font-bold text-gray-900">{{ $total_achievements }}</p>
-            </div>
-            <i class="fas fa-trophy text-yellow-600 text-4xl opacity-20"></i>
+    <div class="card" style="padding:1.25rem;display:flex;align-items:center;gap:1rem;">
+        <div style="width:48px;height:48px;border-radius:12px;background:#fefce8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="fas fa-trophy" style="color:#d97706;font-size:1.2rem"></i>
+        </div>
+        <div>
+            <div style="font-size:1.75rem;font-weight:800;color:#111827;line-height:1">{{ $total_achievements }}</div>
+            <div style="font-size:.78rem;color:#6b7280;font-weight:500;margin-top:2px">Prestasi</div>
         </div>
     </div>
-
-    <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-gray-500 text-sm font-semibold">Pengunjung</p>
-                <p class="text-3xl font-bold text-gray-900">{{ $total_visitors }}</p>
-            </div>
-            <i class="fas fa-users text-purple-600 text-4xl opacity-20"></i>
+    <div class="card" style="padding:1.25rem;display:flex;align-items:center;gap:1rem;">
+        <div style="width:48px;height:48px;border-radius:12px;background:#faf5ff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="fas fa-users" style="color:#8b5cf6;font-size:1.2rem"></i>
+        </div>
+        <div>
+            <div style="font-size:1.75rem;font-weight:800;color:#111827;line-height:1">{{ $total_visitors }}</div>
+            <div style="font-size:.78rem;color:#6b7280;font-weight:500;margin-top:2px">Total Pengunjung</div>
         </div>
     </div>
 </div>
 
-<!-- Quick Stats -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-    <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-bold text-gray-900 mb-4">Statistik Hari Ini</h3>
-        <div class="space-y-3">
-            <div class="flex justify-between">
-                <span class="text-gray-600">Pengunjung Hari Ini</span>
-                <span class="font-bold">{{ $visitors_today }}</span>
+{{-- Quick Stats + Quick Actions --}}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.75rem">
+    <div class="card">
+        <div class="card-header"><h3><i class="fas fa-chart-bar" style="color:#2aad8c;margin-right:.5rem"></i>Statistik</h3></div>
+        <div class="card-body" style="padding:1.25rem">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid #f1f5f9">
+                <span style="font-size:.85rem;color:#6b7280">Pengunjung Hari Ini</span>
+                <span style="font-weight:700;color:#111827;font-size:.9rem">{{ $visitors_today }}</span>
             </div>
-            <div class="flex justify-between">
-                <span class="text-gray-600">Berita Bulan Ini</span>
-                <span class="font-bold">{{ $news_this_month }}</span>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0">
+                <span style="font-size:.85rem;color:#6b7280">Berita Bulan Ini</span>
+                <span style="font-weight:700;color:#111827;font-size:.9rem">{{ $news_this_month }}</span>
             </div>
         </div>
     </div>
-
-    <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-bold text-gray-900 mb-4">Akses Cepat</h3>
-        <div class="space-y-2">
-            <a href="{{ route('admin.news.create') }}" class="block px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-center">Tambah Berita</a>
-            <a href="{{ route('admin.announcements.create') }}" class="block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-center">Buat Pengumuman</a>
+    <div class="card">
+        <div class="card-header"><h3><i class="fas fa-bolt" style="color:#2aad8c;margin-right:.5rem"></i>Akses Cepat</h3></div>
+        <div class="card-body" style="padding:1.25rem;display:flex;flex-direction:column;gap:.6rem">
+            <a href="{{ route('admin.news.create') }}" class="btn btn-primary" style="justify-content:center">
+                <i class="fas fa-plus"></i> Tambah Berita
+            </a>
+            <a href="{{ route('admin.announcements.create') }}" class="btn btn-secondary" style="justify-content:center">
+                <i class="fas fa-plus"></i> Buat Pengumuman
+            </a>
+            <a href="{{ route('admin.galleries.create') }}" class="btn btn-secondary" style="justify-content:center">
+                <i class="fas fa-plus"></i> Upload Galeri
+            </a>
         </div>
     </div>
 </div>
 
-<!-- Recent News -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="bg-white rounded-lg shadow">
-        <div class="p-6 border-b border-gray-200">
-            <h3 class="text-lg font-bold text-gray-900">Berita Terbaru</h3>
+{{-- Recent Lists --}}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card card-table">
+        <div class="card-header">
+            <h3><i class="fas fa-newspaper" style="color:#2aad8c;margin-right:.5rem"></i>Berita Terbaru</h3>
+            <a href="{{ route('admin.news.index') }}" class="btn btn-sm btn-secondary">Lihat Semua</a>
         </div>
-        <div class="divide-y">
-            @forelse($recent_news as $news)
-                <div class="p-6 hover:bg-gray-50">
-                    <p class="font-semibold text-gray-900">{{ $news->title }}</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ $news->published_at?->format('d M Y') ?? 'Draft' }}</p>
-                </div>
-            @empty
-                <p class="p-6 text-gray-500 text-center">Belum ada berita</p>
-            @endforelse
-        </div>
+        <table>
+            <tbody>
+                @forelse($recent_news as $news)
+                <tr>
+                    <td>
+                        <div style="font-weight:600;font-size:.83rem;color:#111827">{{ Str::limit($news->title, 45) }}</div>
+                        <div style="font-size:.72rem;color:#9ca3af;margin-top:2px">{{ $news->published_at?->format('d M Y') ?? 'Draft' }}</div>
+                    </td>
+                    <td style="white-space:nowrap">
+                        <span class="badge {{ $news->status === 'published' ? 'badge-green' : 'badge-yellow' }}">
+                            {{ $news->status === 'published' ? 'Publish' : 'Draft' }}
+                        </span>
+                    </td>
+                    <td style="white-space:nowrap">
+                        <a href="{{ route('admin.news.edit', $news) }}" class="action-btn action-edit"><i class="fas fa-edit"></i></a>
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="3" style="text-align:center;color:#9ca3af;padding:2rem">Belum ada berita</td></tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 
-    <div class="bg-white rounded-lg shadow">
-        <div class="p-6 border-b border-gray-200">
-            <h3 class="text-lg font-bold text-gray-900">Pengumuman Terbaru</h3>
+    <div class="card card-table">
+        <div class="card-header">
+            <h3><i class="fas fa-bullhorn" style="color:#2aad8c;margin-right:.5rem"></i>Pengumuman Terbaru</h3>
+            <a href="{{ route('admin.announcements.index') }}" class="btn btn-sm btn-secondary">Lihat Semua</a>
         </div>
-        <div class="divide-y">
-            @forelse($recent_announcements as $announcement)
-                <div class="p-6 hover:bg-gray-50">
-                    <p class="font-semibold text-gray-900">{{ $announcement->title }}</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ $announcement->created_at->format('d M Y') }}</p>
-                </div>
-            @empty
-                <p class="p-6 text-gray-500 text-center">Belum ada pengumuman</p>
-            @endforelse
-        </div>
+        <table>
+            <tbody>
+                @forelse($recent_announcements as $ann)
+                <tr>
+                    <td>
+                        <div style="font-weight:600;font-size:.83rem;color:#111827">{{ Str::limit($ann->title, 45) }}</div>
+                        <div style="font-size:.72rem;color:#9ca3af;margin-top:2px">{{ $ann->created_at->format('d M Y') }}</div>
+                    </td>
+                    <td style="white-space:nowrap">
+                        <span class="badge {{ $ann->is_active ? 'badge-green' : 'badge-gray' }}">
+                            {{ $ann->is_active ? 'Aktif' : 'Nonaktif' }}
+                        </span>
+                    </td>
+                    <td style="white-space:nowrap">
+                        <a href="{{ route('admin.announcements.edit', $ann) }}" class="action-btn action-edit"><i class="fas fa-edit"></i></a>
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="3" style="text-align:center;color:#9ca3af;padding:2rem">Belum ada pengumuman</td></tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
+
 @endsection

@@ -33,7 +33,6 @@ Route::get('/prestasi/{category}', [AchievementController::class, 'filter'])->na
 Route::get('/galeri', [GalleryController::class, 'index'])->name('gallery.index');
 Route::get('/galeri/{slug}', [GalleryController::class, 'show'])->name('gallery.show');
 Route::get('/guru', [TeacherController::class, 'index'])->name('teacher.index');
-Route::get('/{slug}', [PageController::class, 'show'])->name('page.show');
 
 // Protected Admin Routes
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
@@ -54,3 +53,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 });
 
 require __DIR__.'/auth.php';
+
+// Static pages (wildcard - harus PALING bawah)
+Route::get('/{slug}', [PageController::class, 'show'])->name('page.show');

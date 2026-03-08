@@ -1,56 +1,90 @@
 @extends('layouts.admin')
+@section('title','Buat Berita Baru')
+@section('breadcrumb')<a href="{{ route('admin.news.index') }}">Berita</a> / Buat Baru@endsection
 
-@section('title', 'Buat Berita Baru')
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet">
+@endpush
 
 @section('content')
-<form action="{{ route('admin.news.store') }}" method="POST" enctype="multipart/form-data" class="max-w-3xl">
+<form action="{{ route('admin.news.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
-    
-    <div class="bg-white rounded-lg shadow p-6 space-y-6">
-        <div>
-            <label class="block text-sm font-semibold text-gray-900 mb-2">Judul</label>
-            <input type="text" name="title" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" required>
-        </div>
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:1.25rem;align-items:start">
 
-        <div>
-            <label class="block text-sm font-semibold text-gray-900 mb-2">Kategori</label>
-            <select name="category_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
-                <option value="">-- Pilih Kategori --</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div>
-            <label class="block text-sm font-semibold text-gray-900 mb-2">Konten</label>
-            <textarea name="content" rows="10" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" required></textarea>
-        </div>
-
-        <div>
-            <label class="block text-sm font-semibold text-gray-900 mb-2">Gambar Unggulan</label>
-            <input type="file" name="featured_image" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-semibold text-gray-900 mb-2">Status</label>
-                <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
-                    <option value="draft">Draft</option>
-                    <option value="published">Publish</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-sm font-semibold text-gray-900 mb-2">Tanggal Publikasi</label>
-                <input type="date" name="published_at" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
+        {{-- Kiri: Konten --}}
+        <div style="display:flex;flex-direction:column;gap:1.25rem">
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-pen" style="color:#2aad8c;margin-right:.5rem"></i>Konten Berita</h3></div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Judul Berita <span style="color:#ef4444">*</span></label>
+                        <input type="text" name="title" class="form-input" placeholder="Masukkan judul berita..." value="{{ old('title') }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Konten / Isi Berita <span style="color:#ef4444">*</span></label>
+                        <textarea name="content" id="content" rows="14" class="form-textarea" required>{{ old('content') }}</textarea>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="pt-4 space-x-3">
-            <button type="submit" class="btn-primary">Simpan Berita</button>
-            <a href="{{ route('admin.news.index') }}" class="btn-secondary inline-block">Batal</a>
+        {{-- Kanan: Opsi --}}
+        <div style="display:flex;flex-direction:column;gap:1.25rem">
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-cog" style="color:#2aad8c;margin-right:.5rem"></i>Pengaturan</h3></div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="draft" {{ old('status')=='draft'?'selected':'' }}>Draft</option>
+                            <option value="published" {{ old('status')=='published'?'selected':'' }}>Publish</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Publikasi</label>
+                        <input type="date" name="published_at" class="form-input" value="{{ old('published_at', date('Y-m-d')) }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kategori</label>
+                        <select name="category_id" class="form-select">
+                            <option value="">-- Tanpa Kategori --</option>
+                            @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}" {{ old('category_id')==$cat->id?'selected':'' }}>{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-image" style="color:#2aad8c;margin-right:.5rem"></i>Gambar Unggulan</h3></div>
+                <div class="card-body">
+                    <div id="imgPreviewBox" style="display:none;margin-bottom:1rem">
+                        <img id="imgPreview" style="width:100%;border-radius:8px;object-fit:cover;max-height:160px">
+                    </div>
+                    <input type="file" name="featured_image" accept="image/*" class="form-input" onchange="previewImg(this)">
+                    <p style="font-size:.75rem;color:#9ca3af;margin-top:.5rem">JPG, PNG, WebP. Maks 2MB</p>
+                </div>
+            </div>
+            <div style="display:flex;gap:.75rem">
+                <button type="submit" class="btn btn-primary" style="flex:1;justify-content:center"><i class="fas fa-save"></i> Simpan</button>
+                <a href="{{ route('admin.news.index') }}" class="btn btn-secondary">Batal</a>
+            </div>
         </div>
     </div>
 </form>
 @endsection
+
+@push('scripts')
+<script>
+function previewImg(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('imgPreview').src = e.target.result;
+            document.getElementById('imgPreviewBox').style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+@endpush

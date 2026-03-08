@@ -138,7 +138,7 @@ img { max-width: 100%; height: auto; }
 .btn-primary:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 12px 36px rgba(220,38,38,.35);
+  box-shadow: 0 12px 36px rgba(42,173,140,.35);
 }
 
 .btn-outline {
@@ -151,12 +151,12 @@ img { max-width: 100%; height: auto; }
   border-color: #fff;
 }
 
-.btn-outline-red {
+.btn-outline-red, .btn-outline-primary {
   background: transparent;
   color: var(--primary);
   border-color: var(--primary);
 }
-.btn-outline-red:hover {
+.btn-outline-red:hover, .btn-outline-primary:hover {
   background: var(--primary);
   color: #fff;
 }
@@ -294,6 +294,19 @@ img { max-width: 100%; height: auto; }
 .teacher-card:hover .teacher-overlay { opacity: 1; }
 
 /* =============================================
+   LOCATION MAP
+   ============================================= */
+.location-map { position: relative; }
+.location-map iframe {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+  position: absolute;
+  top: 0; left: 0;
+}
+
+/* =============================================
    CARDS - GALLERY
    ============================================= */
 .gallery-card {
@@ -371,7 +384,7 @@ img { max-width: 100%; height: auto; }
   font-weight: 700;
   letter-spacing: .04em;
 }
-.badge-red   { background: var(--primary-light); color: var(--primary-dark); }
+.badge-red, .badge-primary { background: var(--primary-light); color: var(--primary-dark); }
 .badge-gold  { background: #fef3c7; color: #92400e; }
 .badge-blue  { background: #dbeafe; color: #1d4ed8; }
 .badge-green { background: #dcfce7; color: #166534; }
@@ -658,5 +671,167 @@ nav[role="navigation"] span[aria-current] {
    ============================================= */
 @media (max-width: 768px) {
   .section-title { font-size: 1.5rem; }
-  .page-hero { padding: 100px 0 48px; }
+  .page-hero { padding: 90px 0 40px; }
+}
+
+@media (max-width: 640px) {
+  /* ── Sections spacing ── */
+  .py-20 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+  .py-16 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+  .mb-10 { margin-bottom: 1.75rem !important; }
+  .gap-16 { gap: 2rem !important; }
+  .gap-10 { gap: 1.5rem !important; }
+
+  /* ── Hero ── */
+  .hero { min-height: 88vh; }
+  .hero .py-24 { padding-top: 5rem; padding-bottom: 2rem; }
+
+  /* ── Hero buttons: full-width on tiny screens ── */
+  .hero .flex.flex-wrap { gap: .6rem; }
+  .hero .flex.flex-wrap .btn { flex: 1 1 140px; justify-content: center; min-width: 0; }
+
+  /* ── Stats ── */
+  .stat-card { padding: 1.1rem .75rem; }
+  .stat-card .text-3xl { font-size: 1.5rem !important; }
+  .stat-card div[class*="w-12"] { width: 2.5rem; height: 2.5rem; }
+
+  /* ── News cards ── */
+  .news-card-img { height: 170px !important; }
+
+  /* ── Achievement cards – horizontal swipe carousel on mobile ── */
+  .achievement-grid {
+    display: flex !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: .875rem !important;
+    padding-bottom: .75rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .achievement-grid::-webkit-scrollbar { height: 3px; }
+  .achievement-grid::-webkit-scrollbar-track { background: #ece8df; border-radius: 99px; }
+  .achievement-grid::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 99px; }
+  .achievement-grid .achievement-card {
+    flex: 0 0 240px !important;
+    min-width: 0;
+    scroll-snap-align: start;
+    width: 240px !important;
+  }
+
+  /* ── News cards – horizontal swipe carousel on mobile ── */
+  .news-grid {
+    display: flex !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: .875rem !important;
+    padding-bottom: .75rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .news-grid::-webkit-scrollbar { height: 3px; }
+  .news-grid::-webkit-scrollbar-track { background: #ece8df; border-radius: 99px; }
+  .news-grid::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 99px; }
+  .news-grid .news-card {
+    flex: 0 0 260px !important;
+    min-width: 0;
+    scroll-snap-align: start;
+    width: 260px !important;
+  }
+  .news-grid .news-card-img { height: 155px !important; }
+
+  /* ── Location section – compact on mobile ── */
+  .location-contact-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: .7rem !important;
+  }
+  .location-contact-grid > div {
+    padding: .85rem !important;
+    gap: .6rem !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .location-contact-grid > div .w-11 {
+    width: 2.1rem !important;
+    height: 2.1rem !important;
+  }
+  .location-contact-grid > div p.font-bold { font-size: .75rem !important; margin-bottom: .1rem !important; }
+  .location-contact-grid > div p.text-sm,
+  .location-contact-grid > div a.text-sm { font-size: .72rem !important; }
+  .location-map {
+    height: 240px !important;
+  }
+  .location-map iframe { height: 240px !important; }
+
+  /* ── Teacher cards – horizontal swipe carousel on mobile ── */
+  .teacher-grid {
+    display: flex !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: .875rem !important;
+    padding-bottom: .75rem;
+    /* negative margin trick so cards bleed to edge */
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .teacher-grid::-webkit-scrollbar { height: 3px; }
+  .teacher-grid::-webkit-scrollbar-track { background: #ece8df; border-radius: 99px; }
+  .teacher-grid::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 99px; }
+  .teacher-grid .teacher-card {
+    flex: 0 0 155px !important;
+    min-width: 0;
+    scroll-snap-align: start;
+    width: 155px !important;
+  }
+  .teacher-grid .teacher-img-wrap { height: 185px !important; }
+
+  /* ── Achievement card ── */
+  .achievement-card { padding: 1.1rem; }
+
+  /* ── Section eyebrow centered on mobile ── */
+  .section-eyebrow.mb-4,
+  .section-eyebrow.mb-3 { display: flex; }
+
+  /* ── CTA section ── */
+  .btn-primary, .btn-outline, .btn-outline-red {
+    font-size: .85rem;
+    padding: .6rem 1.25rem;
+  }
+
+  /* ── Footer ── */
+  .footer .gap-10 { gap: 1.75rem !important; }
+  #footer-map { height: 200px !important; }
+
+  /* ── Location section map ── */
+  #footer-map { border-radius: .75rem; }
+
+  /* ── Page hero ── */
+  .page-hero { padding: 80px 0 36px; }
+  .page-hero h1 { font-size: 1.75rem !important; }
+
+  /* ── Pagination touch-friendly ── */
+  nav[role="navigation"] span,
+  nav[role="navigation"] a { min-width: 42px; height: 42px; }
+
+  /* ── Better tap targets ── */
+  .nav-link { padding: .5rem .6rem; }
+  .social-btn { width: 42px; height: 42px; }
+}
+
+/* Extra small – phones < 400px */
+@media (max-width: 400px) {
+  .section-title { font-size: 1.35rem; }
+  .grid.grid-cols-2 .p-5 { padding: .9rem; }
+  .stat-card .text-3xl { font-size: 1.35rem !important; }
+  .hero h1 { font-size: 1.9rem !important; line-height: 1.2; }
+  .ticker-track span { font-size: .75rem; margin-right: 2rem; }
 }

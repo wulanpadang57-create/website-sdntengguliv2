@@ -1,102 +1,112 @@
 @extends('layouts.admin')
-
-@section('title', 'Pengaturan Sekolah')
+@section('title','Pengaturan Sekolah')
+@section('breadcrumb')Pengaturan@endsection
 
 @section('content')
-<form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="max-w-4xl">
+<form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
     @csrf
-    
-    <div class="bg-white rounded-lg shadow p-6 space-y-8">
-        <!-- Informasi Sekolah -->
-        <div>
-            <h3 class="text-lg font-bold text-gray-900 mb-6 border-b pb-4">Informasi Sekolah</h3>
-            
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-900 mb-2">Nama Sekolah</label>
-                    <input type="text" name="school_name" value="{{ \App\Models\Setting::get('school_name') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
-                </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
 
-                <div>
-                    <label class="block text-sm font-semibold text-gray-900 mb-2">Alamat</label>
-                    <textarea name="school_address" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>{{ \App\Models\Setting::get('school_address') }}</textarea>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-900 mb-2">Telepon</label>
-                        <input type="text" name="school_phone" value="{{ \App\Models\Setting::get('school_phone') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+        {{-- Kolom kiri --}}
+        <div style="display:flex;flex-direction:column;gap:1.25rem">
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-school" style="color:#2aad8c;margin-right:.5rem"></i>Informasi Sekolah</h3></div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Nama Sekolah</label>
+                        <input type="text" name="school_name" class="form-input" value="{{ \App\Models\Setting::get('school_name') }}">
                     </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-900 mb-2">Email</label>
-                        <input type="email" name="school_email" value="{{ \App\Models\Setting::get('school_email') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    <div class="form-group">
+                        <label class="form-label">Nama Kepala Sekolah</label>
+                        <input type="text" name="principal_name" class="form-input" value="{{ \App\Models\Setting::get('principal_name') }}">
                     </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold text-gray-900 mb-2">Logo Sekolah</label>
-                    @if(\App\Models\Setting::get('school_logo'))
-                        <div class="mb-4">
-                            <img src="{{ asset('storage/' . \App\Models\Setting::get('school_logo')) }}" alt="Logo" class="w-32 h-32 object-contain">
+                    <div class="form-group">
+                        <label class="form-label">Alamat</label>
+                        <textarea name="school_address" rows="3" class="form-textarea">{{ \App\Models\Setting::get('school_address') }}</textarea>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                        <div class="form-group">
+                            <label class="form-label">Telepon</label>
+                            <input type="text" name="school_phone" class="form-input" value="{{ \App\Models\Setting::get('school_phone') }}">
                         </div>
-                    @endif
-                    <input type="file" name="school_logo" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="school_email" class="form-input" value="{{ \App\Models\Setting::get('school_email') }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Logo Sekolah</label>
+                        @if(\App\Models\Setting::get('school_logo'))
+                        <div style="margin-bottom:.75rem">
+                            <img src="{{ asset('storage/'.\App\Models\Setting::get('school_logo')) }}" style="height:80px;object-fit:contain">
+                        </div>
+                        @endif
+                        <input type="file" name="school_logo" accept="image/*" class="form-input">
+                    </div>
                 </div>
+            </div>
 
-                <div>
-                    <label class="block text-sm font-semibold text-gray-900 mb-2">Nama Kepala Sekolah</label>
-                    <input type="text" name="principal_name" value="{{ \App\Models\Setting::get('principal_name') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-eye" style="color:#2aad8c;margin-right:.5rem"></i>Visi &amp; Misi</h3></div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Visi</label>
+                        <textarea name="vision" rows="4" class="form-textarea">{{ \App\Models\Setting::get('vision') }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Misi</label>
+                        <textarea name="mission" rows="6" class="form-textarea" placeholder="Pisahkan setiap poin misi dengan baris baru...">{{ \App\Models\Setting::get('mission') }}</textarea>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Visi & Misi -->
-        <div>
-            <h3 class="text-lg font-bold text-gray-900 mb-6 border-b pb-4">Visi & Misi</h3>
-            
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-900 mb-2">Visi</label>
-                    <textarea name="vision" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg">{{ \App\Models\Setting::get('vision') }}</textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold text-gray-900 mb-2">Misi</label>
-                    <textarea name="mission" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg">{{ \App\Models\Setting::get('mission') }}</textarea>
-                </div>
-            </div>
-        </div>
-
-        <!-- Social Media -->
-        <div>
-            <h3 class="text-lg font-bold text-gray-900 mb-6 border-b pb-4">Media Sosial</h3>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-900 mb-2">Facebook</label>
-                    <input type="url" name="facebook_url" value="{{ \App\Models\Setting::get('facebook_url') }}" placeholder="https://facebook.com/sd1tengguli" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold text-gray-900 mb-2">Instagram</label>
-                    <input type="url" name="instagram_url" value="{{ \App\Models\Setting::get('instagram_url') }}" placeholder="https://instagram.com/sd1tengguli" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold text-gray-900 mb-2">Twitter</label>
-                    <input type="url" name="twitter_url" value="{{ \App\Models\Setting::get('twitter_url') }}" placeholder="https://twitter.com/sd1tengguli" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold text-gray-900 mb-2">YouTube</label>
-                    <input type="url" name="youtube_url" value="{{ \App\Models\Setting::get('youtube_url') }}" placeholder="https://youtube.com/@sd1tengguli" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+        {{-- Kolom kanan --}}
+        <div style="display:flex;flex-direction:column;gap:1.25rem">
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-share-alt" style="color:#2aad8c;margin-right:.5rem"></i>Media Sosial</h3></div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-facebook" style="color:#1877f2;margin-right:.4rem"></i>Facebook</label>
+                        <input type="url" name="facebook_url" class="form-input" value="{{ \App\Models\Setting::get('facebook_url') }}" placeholder="https://facebook.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-instagram" style="color:#e1306c;margin-right:.4rem"></i>Instagram</label>
+                        <input type="url" name="instagram_url" class="form-input" value="{{ \App\Models\Setting::get('instagram_url') }}" placeholder="https://instagram.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-twitter" style="color:#1da1f2;margin-right:.4rem"></i>Twitter / X</label>
+                        <input type="url" name="twitter_url" class="form-input" value="{{ \App\Models\Setting::get('twitter_url') }}" placeholder="https://twitter.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-youtube" style="color:#ff0000;margin-right:.4rem"></i>YouTube</label>
+                        <input type="url" name="youtube_url" class="form-input" value="{{ \App\Models\Setting::get('youtube_url') }}" placeholder="https://youtube.com/...">
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="pt-4 space-x-3 border-t">
-            <button type="submit" class="btn-primary">Simpan Pengaturan</button>
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-map-marker-alt" style="color:#2aad8c;margin-right:.5rem"></i>Lokasi &amp; Maps</h3></div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Embed Google Maps URL</label>
+                        <textarea name="maps_embed" rows="4" class="form-textarea" placeholder="Paste URL atau embed code Google Maps...">{{ \App\Models\Setting::get('maps_embed') }}</textarea>
+                        <p style="font-size:.75rem;color:#9ca3af;margin-top:.3rem">Masukkan URL embed dari Google Maps (bukan URL biasa)</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Koordinat Latitude</label>
+                        <input type="text" name="school_lat" class="form-input" value="{{ \App\Models\Setting::get('school_lat') }}" placeholder="-6.12345">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Koordinat Longitude</label>
+                        <input type="text" name="school_lng" class="form-input" value="{{ \App\Models\Setting::get('school_lng') }}" placeholder="106.12345">
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:.75rem">
+                <button type="submit" class="btn btn-primary" style="flex:1;justify-content:center"><i class="fas fa-save"></i> Simpan Semua Pengaturan</button>
+            </div>
         </div>
     </div>
 </form>

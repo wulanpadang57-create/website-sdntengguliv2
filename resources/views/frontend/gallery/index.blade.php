@@ -41,11 +41,11 @@
                 </div>
             </div>
             <div class="mt-3 px-1">
-                <h3 class="font-bold text-gray-900 text-sm group-hover:text-red-600 transition-colors">
+                <h3 class="font-bold text-gray-900 text-sm transition-colors" style="" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color=''">
                     {{ $gallery->name }}
                 </h3>
                 <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-1">
-                    <i class="fas fa-images text-red-400"></i>
+                    <i class="fas fa-images" style="color:var(--primary)"></i>
                     {{ $gallery->photos()->count() }} foto
                 </div>
             </div>

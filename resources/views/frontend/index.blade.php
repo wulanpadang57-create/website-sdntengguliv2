@@ -119,8 +119,8 @@
                 ['fa-calendar-check','25+','25','Tahun Berdiri',''],
             ] as [$icon,$display,$num,$label,$suffix])
             <div class="stat-card text-center">
-                <div class="w-12 h-12 rounded-xl bg-red-600/20 border border-red-500/30 flex items-center justify-center mx-auto mb-4">
-                    <i class="fas {{ $icon }} text-red-400 text-xl"></i>
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4" style="background:rgba(42,173,140,.15);border:1px solid rgba(42,173,140,.3)">
+                    <i class="fas {{ $icon }} text-xl" style="color:#5DCFB3"></i>
                 </div>
                 <div class="text-3xl font-extrabold text-white mb-1">
                     <span data-counter data-target="{{ $num }}" data-suffix="+">{{ $display }}</span>
@@ -167,9 +167,11 @@
                         ['fa-medal','Berprestasi','Ratusan penghargaan di berbagai bidang'],
                         ['fa-heart','Karakter Mulia','Menanamkan nilai moral & agama sejak dini'],
                     ] as [$icon,$title,$desc])
-                    <div class="p-5 rounded-2xl border border-gray-100 hover:border-red-200 hover:shadow-md transition-all duration-300" style="background:#fffdf7">
-                        <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center mb-3">
-                            <i class="fas {{ $icon }} text-red-600"></i>
+                    <div class="p-5 rounded-2xl border border-gray-100 transition-all duration-300" style="background:#fffdf7"
+                         onmouseover="this.style.borderColor='#a8e5d6';this.style.boxShadow='0 4px 16px rgba(42,173,140,.1)'"
+                         onmouseout="this.style.borderColor='#f3f4f6';this.style.boxShadow='none'">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style="background:var(--primary-50)">
+                            <i class="fas {{ $icon }}" style="color:var(--primary)"></i>
                         </div>
                         <h3 class="font-bold text-gray-900 text-sm mb-1">{{ $title }}</h3>
                         <p class="text-gray-500 text-xs leading-relaxed">{{ $desc }}</p>
@@ -197,7 +199,7 @@
             </a>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
+        <div class="news-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
             @foreach($recentNews->take(6) as $item)
             <article class="news-card">
                 <div class="news-card-img" style="height:190px">
@@ -212,7 +214,8 @@
                     <div class="ribbon">{{ $item->category?->name ?? 'Umum' }}</div>
                 </div>
                 <div class="p-5 flex flex-col flex-1">
-                    <h3 class="font-bold text-gray-900 text-sm mb-2 line-clamp-2 hover:text-red-600 transition-colors">
+                    <h3 class="font-bold text-gray-900 text-sm mb-2 line-clamp-2 transition-colors" style="--hover-color:var(--primary)"
+                        onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color=''">
                         {{ $item->title }}
                     </h3>
                     <p class="text-gray-500 text-xs flex-1 line-clamp-2 mb-4 leading-relaxed">
@@ -220,11 +223,11 @@
                     </p>
                     <div class="flex items-center justify-between pt-3 border-t border-gray-100">
                         <span class="flex items-center gap-1.5 text-xs text-gray-400">
-                            <i class="fas fa-calendar text-red-400"></i>
+                            <i class="fas fa-calendar" style="color:var(--primary)"></i>
                             {{ $item->published_at->format('d M Y') }}
                         </span>
                         <a href="{{ route('news.show', $item->slug) }}"
-                           class="text-red-600 text-xs font-bold flex items-center gap-1 hover:gap-2 transition-all">
+                           class="text-xs font-bold flex items-center gap-1 hover:gap-2 transition-all" style="color:var(--primary)">
                             Baca <i class="fas fa-arrow-right text-xs"></i>
                         </a>
                     </div>
@@ -252,7 +255,7 @@
             </a>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
+        <div class="achievement-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
             @foreach($achievements->take(6) as $ach)
             <div class="achievement-card">
                 <div class="flex items-start gap-4">
@@ -269,9 +272,9 @@
                 @endif
                 <div class="flex items-center gap-3 mt-4 pt-3 border-t border-gray-100 text-xs text-gray-400">
                     @if($ach->student_name)
-                    <span class="flex items-center gap-1"><i class="fas fa-user text-red-400"></i>{{ $ach->student_name }}</span>
+                    <span class="flex items-center gap-1"><i class="fas fa-user" style="color:var(--primary)"></i>{{ $ach->student_name }}</span>
                     @endif
-                    <span class="flex items-center gap-1 ml-auto"><i class="fas fa-calendar text-red-400"></i>{{ $ach->achievement_date->format('Y') }}</span>
+                    <span class="flex items-center gap-1 ml-auto"><i class="fas fa-calendar" style="color:var(--primary)"></i>{{ $ach->achievement_date->format('Y') }}</span>
                 </div>
             </div>
             @endforeach
@@ -296,7 +299,7 @@
             </a>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
+        <div class="teacher-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
             @foreach($teachers as $teacher)
             <div class="teacher-card">
                 <div class="teacher-img-wrap" style="height:260px">
@@ -317,11 +320,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="p-5 text-center">
-                    <h3 class="font-bold text-gray-900">{{ $teacher->name }}</h3>
-                    <p class="text-red-600 font-semibold text-sm mt-1">{{ $teacher->position }}</p>
+                <div class="p-4 text-center">
+                    <h3 class="font-bold text-gray-900 text-sm leading-snug">{{ $teacher->name }}</h3>
+                    <p class="font-semibold text-xs mt-1" style="color:var(--primary)">{{ $teacher->position }}</p>
                     @if($teacher->subjects)
-                    <p class="text-gray-500 text-xs mt-1">{{ $teacher->subjects }}</p>
+                    <p class="text-gray-400 text-xs mt-0.5 line-clamp-1">{{ $teacher->subjects }}</p>
                     @endif
                 </div>
             </div>
@@ -330,6 +333,109 @@
     </div>
 </section>
 @endif
+
+{{-- ================================================================
+     LOKASI & KONTAK
+================================================================ --}}
+@php
+    $mapsEmbed  = \App\Models\Setting::get('maps_embed');
+    $schoolAddr = \App\Models\Setting::get('school_address', 'Tengguli, Jawa Tengah');
+    $schoolPhone= \App\Models\Setting::get('school_phone');
+    $schoolEmail= \App\Models\Setting::get('school_email');
+@endphp
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12" data-reveal="up">
+            <div class="section-eyebrow mb-4 mx-auto">Temukan Kami</div>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
+                Lokasi <span style="color:var(--primary)">Sekolah</span>
+            </h2>
+            <p class="text-gray-500 max-w-xl mx-auto">Kunjungi kami langsung atau hubungi sekolah untuk informasi lebih lanjut.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start" data-reveal="up">
+
+            {{-- Info Kontak --}}
+            <div class="location-contact-grid flex flex-col gap-5">
+                <div class="flex items-start gap-4 p-5 rounded-2xl border border-gray-100 shadow-sm">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#edfaf7">
+                        <i class="fas fa-map-marker-alt" style="color:var(--primary)"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-900 mb-1">Alamat</p>
+                        <p class="text-gray-500 text-sm leading-relaxed">{{ $schoolAddr }}</p>
+                    </div>
+                </div>
+                @if($schoolPhone)
+                <div class="flex items-start gap-4 p-5 rounded-2xl border border-gray-100 shadow-sm">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#edfaf7">
+                        <i class="fas fa-phone" style="color:var(--primary)"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-900 mb-1">Telepon</p>
+                        <a href="tel:{{ $schoolPhone }}" class="text-sm" style="color:var(--primary)">{{ $schoolPhone }}</a>
+                    </div>
+                </div>
+                @endif
+                @if($schoolEmail)
+                <div class="flex items-start gap-4 p-5 rounded-2xl border border-gray-100 shadow-sm">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#edfaf7">
+                        <i class="fas fa-envelope" style="color:var(--primary)"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-900 mb-1">Email</p>
+                        <a href="mailto:{{ $schoolEmail }}" class="text-sm" style="color:var(--primary)">{{ $schoolEmail }}</a>
+                    </div>
+                </div>
+                @endif
+                <div class="flex items-start gap-4 p-5 rounded-2xl border border-gray-100 shadow-sm">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#edfaf7">
+                        <i class="fas fa-clock" style="color:var(--primary)"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-900 mb-1">Jam Operasional</p>
+                        <p class="text-gray-500 text-sm">Senin – Sabtu<br>07.00 – 14.00 WIB</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Peta --}}
+            <div class="location-map lg:col-span-2 rounded-2xl overflow-hidden shadow-lg" style="height:380px;background:#e5e7eb">
+                @if($mapsEmbed)
+                    @php
+                        $embedHtml = trim($mapsEmbed);
+                        if (str_starts_with($embedHtml, '<iframe')) {
+                            // Force width/height to 100% and add display:block
+                            $embedHtml = preg_replace('/\s*width=["\']?[\w%]+["\']?/i', ' width="100%"', $embedHtml);
+                            $embedHtml = preg_replace('/\s*height=["\']?[\w%]+["\']?/i', ' height="100%"', $embedHtml);
+                            $embedHtml = preg_replace('/<iframe/i', '<iframe style="display:block;border:0;width:100%;height:100%"', $embedHtml);
+                        }
+                    @endphp
+                    @if(str_starts_with(trim($mapsEmbed), '<iframe'))
+                        {!! $embedHtml !!}
+                    @else
+                        <iframe
+                            src="{{ $mapsEmbed }}"
+                            width="100%" height="100%"
+                            style="border:0;display:block;width:100%;height:100%"
+                            allowfullscreen loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    @endif
+                @else
+                    {{-- Placeholder jika maps belum diatur --}}
+                    <div class="w-full h-full flex flex-col items-center justify-center gap-3" style="background:#f3f4f6">
+                        <i class="fas fa-map-marked-alt text-4xl" style="color:#d1d5db"></i>
+                        <p class="text-gray-400 text-sm font-medium">Peta belum dikonfigurasi</p>
+                        <a href="/admin/settings" class="text-xs px-4 py-2 rounded-full" style="background:#edfaf7;color:var(--primary)">
+                            Atur di Admin Panel
+                        </a>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</section>
 
 {{-- ================================================================
      CTA

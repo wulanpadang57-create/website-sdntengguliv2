@@ -1,53 +1,47 @@
 @extends('layouts.admin')
-
-@section('title', 'Manajemen Pengumuman')
+@section('title','Manajemen Pengumuman')
+@section('breadcrumb')Pengumuman@endsection
 
 @section('content')
-<div class="mb-6 flex justify-between items-center">
-    <div></div>
-    <a href="{{ route('admin.announcements.create') }}" class="btn-primary">Buat Pengumuman Baru</a>
+<div class="page-header">
+    <div class="page-header-info">
+        <h1>Pengumuman</h1>
+        <p>Kelola pengumuman yang tampil di website</p>
+    </div>
+    <a href="{{ route('admin.announcements.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Buat Pengumuman</a>
 </div>
 
-<div class="bg-white rounded-lg shadow overflow-hidden">
-    <table class="w-full">
-        <thead class="bg-gray-100 border-b">
+<div class="card card-table">
+    <table>
+        <thead>
             <tr>
-                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Judul</th>
-                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Prioritas</th>
-                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
-                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Aksi</th>
+                <th>Judul</th>
+                <th>Prioritas</th>
+                <th>Status</th>
+                <th>Tanggal</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
             @forelse($announcements as $item)
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="px-6 py-4 text-sm text-gray-900">{{ $item->title }}</td>
-                    <td class="px-6 py-4 text-sm">
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $item->priority === 'urgent' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
-                            {{ ucfirst($item->priority) }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-sm">
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $item->is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                            {{ $item->is_active ? 'Aktif' : 'Tidak Aktif' }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-sm space-x-2">
-                        <a href="{{ route('admin.announcements.edit', $item) }}" class="text-blue-600 hover:text-blue-800"><i class="fas fa-edit"></i></a>
-                        <form method="POST" action="{{ route('admin.announcements.destroy', $item) }}" class="inline">
-                            @csrf @method('DELETE')
-                            <button type="submit" onclick="return confirm('Yakin?')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
-                        </form>
-                    </td>
-                </tr>
+            <tr>
+                <td style="font-weight:600;color:#111827">{{ Str::limit($item->title,60) }}</td>
+                <td><span class="badge {{ $item->priority === 'urgent' ? 'badge-red' : 'badge-blue' }}">{{ ucfirst($item->priority) }}</span></td>
+                <td><span class="badge {{ $item->is_active ? 'badge-green' : 'badge-gray' }}">{{ $item->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
+                <td style="white-space:nowrap;color:#6b7280">{{ $item->created_at->format('d M Y') }}</td>
+                <td style="white-space:nowrap">
+                    <a href="{{ route('admin.announcements.edit', $item) }}" class="action-btn action-edit"><i class="fas fa-edit"></i></a>
+                    <form method="POST" action="{{ route('admin.announcements.destroy', $item) }}" class="inline" onsubmit="return confirm('Hapus pengumuman ini?')">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="action-btn action-delete"><i class="fas fa-trash"></i></button>
+                    </form>
+                </td>
+            </tr>
             @empty
-                <tr>
-                    <td colspan="4" class="px-6 py-8 text-center text-gray-500">Belum ada pengumuman</td>
-                </tr>
+            <tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:3rem">Belum ada pengumuman</td></tr>
             @endforelse
         </tbody>
     </table>
 </div>
-
-{{ $announcements->links() }}
+<div style="margin-top:1rem">{{ $announcements->links() }}</div>
 @endsection

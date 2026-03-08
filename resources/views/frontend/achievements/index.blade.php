@@ -66,11 +66,11 @@
             <div class="flex items-center gap-3 mt-4 pt-3 border-t border-gray-100 text-xs text-gray-400">
                 @if($ach->student_name)
                 <span class="flex items-center gap-1">
-                    <i class="fas fa-user text-red-400"></i>{{ $ach->student_name }}
+                    <i class="fas fa-user" style="color:var(--primary)"></i>{{ $ach->student_name }}
                 </span>
                 @endif
                 <span class="flex items-center gap-1 ml-auto">
-                    <i class="fas fa-calendar text-red-400"></i>
+                    <i class="fas fa-calendar" style="color:var(--primary)"></i>
                     {{ $ach->achievement_date->format('d M Y') }}
                 </span>
             </div>

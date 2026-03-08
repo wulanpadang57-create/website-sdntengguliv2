@@ -28,6 +28,9 @@ class SettingController extends Controller
             'instagram_url' => 'nullable|url',
             'twitter_url' => 'nullable|url',
             'youtube_url' => 'nullable|url',
+            'maps_embed' => 'nullable|string',
+            'school_lat' => 'nullable|string|max:30',
+            'school_lng' => 'nullable|string|max:30',
         ]);
 
         foreach ($validated as $key => $value) {
