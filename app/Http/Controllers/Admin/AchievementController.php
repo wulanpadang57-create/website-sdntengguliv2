@@ -24,7 +24,7 @@ class AchievementController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'required|in:akademik,olahraga,seni,lainnya',
+            'category' => 'required|in:akademik,non-akademik,olahraga,seni,lainnya',
             'student_name' => 'nullable|string',
             'achievement_image' => 'nullable|image|max:2048',
             'year' => 'required|integer|min:2000',
@@ -53,7 +53,7 @@ class AchievementController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'required|in:akademik,olahraga,seni,lainnya',
+            'category' => 'required|in:akademik,non-akademik,olahraga,seni,lainnya',
             'student_name' => 'nullable|string',
             'achievement_image' => 'nullable|image|max:2048',
             'year' => 'required|integer|min:2000',

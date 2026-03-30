@@ -9,6 +9,7 @@ use App\Models\Gallery;
 use App\Models\Slider;
 use App\Models\Teacher;
 use App\Models\Visitor;
+use App\Models\Extracurricular;
 
 class HomeController extends Controller
 {
@@ -40,6 +41,11 @@ class HomeController extends Controller
             ->limit(6)
             ->get();
         $teachers = Teacher::limit(3)->get();
+        $extracurriculars = Extracurricular::where('status', 'published')
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'desc')
+            ->limit(6)
+            ->get();
 
         $heroStats = [
             'teachers'     => Teacher::count(),
@@ -48,6 +54,6 @@ class HomeController extends Controller
             'galleries'    => Gallery::count(),
         ];
 
-        return view('frontend.index', compact('sliders', 'announcements', 'recentNews', 'achievements', 'teachers', 'heroStats'));
+        return view('frontend.index', compact('sliders', 'announcements', 'recentNews', 'achievements', 'teachers', 'heroStats', 'extracurriculars'));
     }
 }

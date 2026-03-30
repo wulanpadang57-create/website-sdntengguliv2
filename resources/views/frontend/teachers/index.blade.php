@@ -15,15 +15,15 @@
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
+<div class="teachers-index-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
 
     {{-- Kepala Sekolah --}}
     @if($kepala_sekolah)
-    <div>
+    <div class="teachers-headmaster-section">
         <div class="section-eyebrow mb-2">Pimpinan Sekolah</div>
         <h2 class="section-title mb-10">Kepala <span class="gradient-text">Sekolah</span></h2>
         <div class="max-w-xs mx-auto" data-reveal="up">
-            <div class="teacher-card">
+            <div class="teacher-card teacher-headmaster-card">
                 <div class="teacher-img-wrap" style="height:300px">
                     @if($kepala_sekolah->photo)
                     <img src="{{ asset('storage/'.$kepala_sekolah->photo) }}" alt="{{ $kepala_sekolah->name }}">
@@ -57,10 +57,10 @@
 
     {{-- Wakil Kepala --}}
     @if($wakil_kepala->count())
-    <div>
+    <div class="teachers-vice-section">
         <div class="section-eyebrow mb-2">Pimpinan</div>
         <h2 class="section-title mb-10">Wakil Kepala <span class="gradient-text">Sekolah</span></h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" data-reveal-group>
+        <div class="teachers-vice-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" data-reveal-group>
             @foreach($wakil_kepala as $t)
             <div class="teacher-card">
                 <div class="teacher-img-wrap" style="height:260px">
@@ -91,10 +91,10 @@
 
     {{-- Guru --}}
     @if($guru->count())
-    <div>
+    <div class="teachers-staff-section">
         <div class="section-eyebrow mb-2">Tim Pengajar</div>
         <h2 class="section-title mb-10">Daftar <span class="gradient-text">Guru</span></h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7" data-reveal-group>
+        <div class="teachers-staff-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7" data-reveal-group>
             @foreach($guru as $t)
             <div class="teacher-card">
                 <div class="teacher-img-wrap" style="height:220px">

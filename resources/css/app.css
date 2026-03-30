@@ -712,6 +712,130 @@ nav[role="navigation"] span[aria-current] {
   /* ── News cards ── */
   .news-card-img { height: 170px !important; }
 
+  /* ── News index page (compact cards + filter chips) ── */
+  .news-index-layout { gap: 1rem !important; }
+  .news-index-sidebar { display: grid; gap: .75rem !important; }
+  .news-index-sidebar > div { padding: .8rem !important; border-radius: .85rem !important; }
+  .news-index-sidebar .space-y-1 {
+    display: flex;
+    gap: .45rem;
+    overflow-x: auto;
+    padding-bottom: .2rem;
+    scrollbar-width: none;
+  }
+  .news-index-sidebar .space-y-1::-webkit-scrollbar { display: none; }
+  .news-index-sidebar .space-y-1 a {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: .45rem .75rem !important;
+    border-radius: .7rem !important;
+    font-size: .74rem !important;
+  }
+  .news-index-grid {
+    display: grid !important;
+    gap: .7rem !important;
+    grid-template-columns: 1fr !important;
+  }
+  .news-index-grid .news-card,
+  .extracurricular-index-grid .news-card {
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    align-items: stretch;
+    min-height: 112px;
+  }
+  .news-index-grid .news-card-img,
+  .extracurricular-index-grid .news-card-img {
+    height: auto !important;
+    min-height: 112px;
+  }
+  .news-index-grid .news-card .ribbon,
+  .extracurricular-index-grid .news-card .ribbon {
+    top: 8px;
+    left: 8px;
+    font-size: .6rem;
+    padding: .18rem .45rem;
+  }
+  .news-index-grid .news-card > .p-5,
+  .extracurricular-index-grid .news-card > .p-5 {
+    padding: .75rem .7rem !important;
+  }
+  .news-index-grid .news-card h3,
+  .extracurricular-index-grid .news-card h3 { font-size: .78rem !important; margin-bottom: .25rem !important; }
+  .news-index-grid .news-card p,
+  .extracurricular-index-grid .news-card p { margin-bottom: .35rem !important; }
+  .news-index-grid .news-card .pt-3,
+  .extracurricular-index-grid .news-card .pt-3 {
+    padding-top: .45rem !important;
+    margin-top: auto;
+    border-top-color: #f1f5f9 !important;
+  }
+
+  /* ── Achievement index page (compact cards) ── */
+  .achievement-filter-wrap .py-4 { padding-top: .65rem !important; padding-bottom: .65rem !important; }
+  .achievement-filter-wrap a { font-size: .72rem !important; padding: .4rem .7rem !important; border-radius: .7rem !important; }
+  .achievements-index-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: .7rem !important;
+  }
+  .achievements-index-grid .achievement-card {
+    padding: .85rem !important;
+    border-radius: .9rem;
+  }
+  .achievements-index-grid .achievement-card .trophy-icon {
+    width: 40px;
+    height: 40px;
+  }
+  .achievements-index-grid .achievement-card .trophy-icon i { font-size: .95rem !important; }
+  .achievements-index-grid .achievement-card .mt-4.rounded-xl { height: 105px !important; margin-top: .6rem !important; }
+  .achievements-index-grid .achievement-card .pt-3 { padding-top: .5rem !important; margin-top: .5rem !important; }
+
+  /* ── Extracurricular index page uses compact news-like cards ── */
+  .extracurricular-index-grid {
+    display: grid !important;
+    gap: .7rem !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Gallery index page (2-up compact tiles) ── */
+  .gallery-index-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: .7rem !important;
+  }
+  .gallery-index-grid .gallery-card {
+    aspect-ratio: 1/1;
+    border-radius: .85rem;
+  }
+  .gallery-index-grid .gallery-overlay {
+    opacity: 1;
+    padding: .6rem;
+    background: linear-gradient(to top, rgba(10,74,60,.78) 0%, rgba(10,74,60,.16) 60%, transparent);
+  }
+  .gallery-index-grid .gallery-overlay h3 { font-size: .72rem !important; margin-bottom: .1rem !important; }
+  .gallery-index-grid + .mt-12 { margin-top: 1.3rem !important; }
+
+  /* ── Teachers page (denser spacing and shorter cards) ── */
+  .teachers-index-page { gap: 2rem !important; }
+  .teachers-index-page .section-title { margin-bottom: 1rem !important; }
+  .teachers-index-page .teacher-img-wrap[style*="height:300px"] { height: 220px !important; }
+  .teachers-index-page .teacher-img-wrap[style*="height:260px"] { height: 180px !important; }
+  .teachers-index-page .teacher-img-wrap[style*="height:220px"] { height: 150px !important; }
+  .teachers-headmaster-section .teacher-headmaster-card .p-6 { padding: .9rem !important; }
+  .teachers-headmaster-section .teacher-headmaster-card h3 { font-size: 1rem !important; }
+  .teachers-vice-grid,
+  .teachers-staff-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: .65rem !important;
+  }
+  .teachers-vice-grid .teacher-card .p-5,
+  .teachers-staff-grid .teacher-card .p-4 {
+    padding: .65rem !important;
+  }
+  .teachers-vice-grid .teacher-card h3,
+  .teachers-staff-grid .teacher-card h3 { font-size: .76rem !important; line-height: 1.3; }
+  .teachers-vice-grid .teacher-card p,
+  .teachers-staff-grid .teacher-card p { font-size: .67rem !important; margin-top: .2rem !important; }
+
   /* ── Achievement cards – horizontal swipe carousel on mobile ── */
   .achievement-grid {
     display: flex !important;

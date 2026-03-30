@@ -32,7 +32,7 @@
                             <p style="font-size:.72rem;color:#9ca3af;margin-top:.3rem">Cover saat ini. Upload baru untuk mengganti.</p>
                         </div>
                         @endif
-                        <input type="file" name="cover_image" accept="image/*" class="form-input" onchange="previewImg(this)">
+                        <input type="file" name="cover_image" accept="image/*" class="form-input" data-crop="true" data-crop-ratio="4/3" data-preview-img="imgPreview" data-preview-box="imgPreviewBox">
                         <div id="imgPreviewBox" style="display:none;margin-top:.75rem">
                             <img id="imgPreview" style="width:100%;max-height:150px;object-fit:cover;border-radius:8px">
                         </div>
@@ -68,7 +68,7 @@
                 <div style="display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-bottom:1px solid #f3f4f6">
                     <img src="{{ asset('storage/'.$photo->photo) }}" style="width:56px;height:42px;object-fit:cover;border-radius:6px;flex-shrink:0">
                     <span style="flex:1;font-size:.8rem;color:#6b7280;word-break:break-all">{{ basename($photo->photo) }}</span>
-                    <form method="POST" action="{{ route('admin.gallery-photos.delete', $photo) }}" style="flex-shrink:0">
+                    <form method="POST" action="{{ route('admin.galleries.delete-photo', [$gallery, $photo]) }}" style="flex-shrink:0">
                         @csrf @method('DELETE')
                         <button type="submit" onclick="return confirm('Hapus foto ini?')" class="action-btn delete" style="width:32px;height:32px"><i class="fas fa-trash"></i></button>
                     </form>
@@ -81,6 +81,3 @@
     </div>
 </div>
 @endsection
-@push('scripts')
-<script>function previewImg(i){if(i.files&&i.files[0]){const r=new FileReader();r.onload=e=>{document.getElementById('imgPreview').src=e.target.result;document.getElementById('imgPreviewBox').style.display='block'};r.readAsDataURL(i.files[0])}}</script>
-@endpush

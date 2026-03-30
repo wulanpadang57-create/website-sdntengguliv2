@@ -15,11 +15,11 @@
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
+<div class="news-index-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="news-index-layout grid grid-cols-1 lg:grid-cols-4 gap-10">
 
         {{-- SIDEBAR --}}
-        <aside class="lg:col-span-1 space-y-6">
+        <aside class="news-index-sidebar lg:col-span-1 space-y-6">
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                 <h3 class="font-bold text-gray-900 mb-3 flex items-center gap-2 text-sm">
                     <i class="fas fa-search" style="color:var(--primary)"></i>Cari Berita
@@ -64,14 +64,14 @@
         </aside>
 
         {{-- MAIN --}}
-        <main class="lg:col-span-3">
+        <main class="news-index-main lg:col-span-3">
             @if(request('search'))
             <p class="text-gray-500 text-sm mb-6">
                 Hasil untuk: <strong class="text-gray-900">"{{ request('search') }}"</strong>
             </p>
             @endif
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-7" data-reveal-group>
+            <div class="news-index-grid grid grid-cols-1 sm:grid-cols-2 gap-7" data-reveal-group>
                 @forelse($news as $item)
                 <article class="news-card">
                     <div class="news-card-img" style="height:190px">

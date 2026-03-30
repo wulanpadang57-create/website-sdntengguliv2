@@ -100,6 +100,20 @@ if %errorlevel% neq 0 (
 )
 echo OK - Assets built
 
+REM 8. Create storage symlink for uploaded files
+echo.
+echo [Bonus] Checking public storage link...
+if exist public\storage (
+    echo OK - public\storage link already exists
+) else (
+    call php artisan storage:link
+    if %errorlevel% neq 0 (
+        echo WARNING: Gagal membuat storage link. Jalankan manual: php artisan storage:link
+    ) else (
+        echo OK - storage link created
+    )
+)
+
 echo.
 echo ========================================
 echo   ✅ Setup Selesai!

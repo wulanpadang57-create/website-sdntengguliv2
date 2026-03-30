@@ -6,6 +6,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\ExtracurricularController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Admin\TeacherController as AdminTeacherController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\ExtracurricularController as AdminExtracurricularController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +35,8 @@ Route::get('/prestasi/{category}', [AchievementController::class, 'filter'])->na
 Route::get('/galeri', [GalleryController::class, 'index'])->name('gallery.index');
 Route::get('/galeri/{slug}', [GalleryController::class, 'show'])->name('gallery.show');
 Route::get('/guru', [TeacherController::class, 'index'])->name('teacher.index');
+Route::get('/ekstrakurikuler', [ExtracurricularController::class, 'index'])->name('extracurricular.index');
+Route::get('/ekstrakurikuler/{slug}', [ExtracurricularController::class, 'show'])->name('extracurricular.show');
 
 // Protected Admin Routes
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
@@ -45,6 +49,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::post('/galleries/{gallery}/add-photos', [AdminGalleryController::class, 'addPhotos'])->name('galleries.add-photos');
     Route::delete('/galleries/{gallery}/photos/{photo}', [AdminGalleryController::class, 'deletePhoto'])->name('galleries.delete-photo');
     Route::resource('/videos', VideoController::class);
+    Route::resource('/extracurriculars', AdminExtracurricularController::class);
     Route::resource('/teachers', AdminTeacherController::class);
     Route::resource('/sliders', SliderController::class);
     Route::resource('/users', UserController::class);

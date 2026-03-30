@@ -52,7 +52,10 @@
                             <img src="{{ asset('storage/'.\App\Models\Setting::get('school_logo')) }}" style="height:80px;object-fit:contain">
                         </div>
                         @endif
-                        <input type="file" name="school_logo" accept="image/*" class="form-input">
+                        <input type="file" name="school_logo" accept="image/*" class="form-input" data-crop="true" data-crop-ratio="1/1" data-preview-img="schoolLogoPreview" data-preview-box="schoolLogoPreviewBox">
+                        <div id="schoolLogoPreviewBox" style="display:none;margin-top:.75rem">
+                            <img id="schoolLogoPreview" style="height:80px;object-fit:contain">
+                        </div>
                     </div>
                 </div>
             </div>

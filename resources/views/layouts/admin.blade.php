@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -247,6 +248,63 @@
             #sidebar-overlay.active { display: block; }
             #main-wrap { margin-left: 0 !important; }
         }
+
+        .crop-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(2, 6, 23, .72);
+        }
+        .crop-modal.open { display: flex; }
+        .crop-panel {
+            width: min(980px, 96vw);
+            max-height: 94vh;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 20px 50px rgba(0,0,0,.25);
+            display: flex;
+            flex-direction: column;
+        }
+        .crop-panel-header {
+            padding: .9rem 1rem;
+            border-bottom: 1px solid #eef2f7;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+        }
+        .crop-panel-title { font-size: .92rem; font-weight: 700; color: #111827; }
+        .crop-panel-body {
+            padding: .75rem;
+            background: #f8fafc;
+            min-height: 340px;
+            height: min(66vh, 620px);
+        }
+        .crop-image-wrap {
+            width: 100%;
+            height: 100%;
+            background: #111827;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #cropperImage {
+            display: block;
+            max-width: 100%;
+        }
+        .crop-panel-footer {
+            padding: .9rem 1rem;
+            border-top: 1px solid #eef2f7;
+            display: flex;
+            justify-content: flex-end;
+            gap: .6rem;
+            flex-wrap: wrap;
+        }
     </style>
     @stack('styles')
 </head>
@@ -282,13 +340,12 @@
         <a href="{{ route('admin.achievements.index') }}" class="nav-item {{ request()->routeIs('admin.achievements.*') ? 'active' : '' }}">
             <i class="fas fa-trophy"></i> Prestasi
         </a>
+        <a href="{{ route('admin.extracurriculars.index') }}" class="nav-item {{ request()->routeIs('admin.extracurriculars.*') ? 'active' : '' }}">
+            <i class="fas fa-shapes"></i> Ekstrakurikuler
+        </a>
         <a href="{{ route('admin.galleries.index') }}" class="nav-item {{ request()->routeIs('admin.galleries.*') ? 'active' : '' }}">
             <i class="fas fa-images"></i> Galeri Foto
         </a>
-        <a href="{{ route('admin.videos.index') }}" class="nav-item {{ request()->routeIs('admin.videos.*') ? 'active' : '' }}">
-            <i class="fas fa-play-circle"></i> Video
-        </a>
-
         {{-- Data --}}
         <div class="nav-section-label">Data Sekolah</div>
         <a href="{{ route('admin.teachers.index') }}" class="nav-item {{ request()->routeIs('admin.teachers.*') ? 'active' : '' }}">
@@ -374,6 +431,26 @@
     </main>
 </div>
 
+<div id="cropModal" class="crop-modal" aria-hidden="true">
+    <div class="crop-panel" role="dialog" aria-modal="true" aria-labelledby="cropperTitle">
+        <div class="crop-panel-header">
+            <div class="crop-panel-title" id="cropperTitle">Atur Crop Foto</div>
+            <button type="button" class="btn btn-secondary btn-sm" id="cropCancelTop">
+                <i class="fas fa-xmark"></i> Tutup
+            </button>
+        </div>
+        <div class="crop-panel-body">
+            <div class="crop-image-wrap">
+                <img id="cropperImage" alt="Crop Preview">
+            </div>
+        </div>
+        <div class="crop-panel-footer">
+            <button type="button" class="btn btn-secondary" id="cropCancelBtn">Batal</button>
+            <button type="button" class="btn btn-primary" id="cropApplyBtn"><i class="fas fa-crop"></i> Gunakan Hasil Crop</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const sidebar     = document.getElementById('sidebar');
     const mainWrap    = document.getElementById('main-wrap');
@@ -402,6 +479,135 @@
             setTimeout(() => el.remove(), 500);
         });
     }, 4000);
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+<script>
+    (() => {
+        const modal = document.getElementById('cropModal');
+        const imageEl = document.getElementById('cropperImage');
+        const applyBtn = document.getElementById('cropApplyBtn');
+        const cancelBtn = document.getElementById('cropCancelBtn');
+        const cancelTopBtn = document.getElementById('cropCancelTop');
+
+        if (!modal || !imageEl || typeof Cropper === 'undefined') return;
+
+        let cropper = null;
+        let activeInput = null;
+        let activeFileName = 'cropped-image.jpg';
+
+        const parseRatio = (value) => {
+            if (!value || value === 'free') return NaN;
+            if (value.includes('/')) {
+                const parts = value.split('/').map(v => Number(v.trim()));
+                if (parts.length === 2 && parts[0] > 0 && parts[1] > 0) {
+                    return parts[0] / parts[1];
+                }
+            }
+            const num = Number(value);
+            return Number.isFinite(num) && num > 0 ? num : NaN;
+        };
+
+        const closeModal = () => {
+            modal.classList.remove('open');
+            modal.setAttribute('aria-hidden', 'true');
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            imageEl.removeAttribute('src');
+            activeInput = null;
+        };
+
+        const updatePreview = (input, file) => {
+            const form = input.closest('form');
+            const previewImgId = input.dataset.previewImg || 'imgPreview';
+            const previewBoxId = input.dataset.previewBox || 'imgPreviewBox';
+            const previewImg = form ? form.querySelector('#' + previewImgId) : document.getElementById(previewImgId);
+            const previewBox = form ? form.querySelector('#' + previewBoxId) : document.getElementById(previewBoxId);
+            if (!previewImg) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                if (previewBox) previewBox.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        };
+
+        const openModal = (input, file) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imageEl.src = e.target.result;
+                modal.classList.add('open');
+                modal.setAttribute('aria-hidden', 'false');
+
+                const aspectRatio = parseRatio(input.dataset.cropRatio || '16/9');
+                cropper = new Cropper(imageEl, {
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 1,
+                    responsive: true,
+                    background: false,
+                    aspectRatio,
+                });
+            };
+            reader.readAsDataURL(file);
+        };
+
+        document.addEventListener('change', (event) => {
+            const input = event.target;
+            if (!(input instanceof HTMLInputElement)) return;
+            if (input.type !== 'file') return;
+            if (input.multiple) return;
+            if (input.dataset.crop !== 'true') return;
+
+            const file = input.files && input.files[0];
+            if (!file || !file.type.startsWith('image/')) return;
+
+            activeInput = input;
+            activeFileName = file.name || 'cropped-image.jpg';
+            openModal(input, file);
+        });
+
+        applyBtn.addEventListener('click', () => {
+            if (!cropper || !activeInput) return;
+
+            const mimeType = activeInput.dataset.cropType || 'image/jpeg';
+            const quality = Number(activeInput.dataset.cropQuality || '0.92');
+            const width = Number(activeInput.dataset.cropWidth || 0);
+            const height = Number(activeInput.dataset.cropHeight || 0);
+
+            const canvasOptions = {
+                fillColor: '#ffffff',
+                imageSmoothingQuality: 'high',
+            };
+            if (width > 0) canvasOptions.width = width;
+            if (height > 0) canvasOptions.height = height;
+
+            cropper.getCroppedCanvas(canvasOptions).toBlob((blob) => {
+                if (!blob || !activeInput) return;
+
+                const ext = mimeType === 'image/png' ? 'png' : 'jpg';
+                const baseName = activeFileName.replace(/\.[^/.]+$/, '');
+                const croppedFile = new File([blob], baseName + '-cropped.' + ext, {
+                    type: mimeType,
+                    lastModified: Date.now(),
+                });
+
+                const dt = new DataTransfer();
+                dt.items.add(croppedFile);
+                activeInput.files = dt.files;
+                updatePreview(activeInput, croppedFile);
+                closeModal();
+            }, mimeType, Number.isFinite(quality) ? quality : 0.92);
+        });
+
+        cancelBtn.addEventListener('click', closeModal);
+        cancelTopBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    })();
 </script>
 @stack('scripts')
 </body>

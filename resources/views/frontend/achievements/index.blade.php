@@ -16,7 +16,7 @@
 </div>
 
 {{-- Category filter tabs --}}
-<div class="bg-white border-b border-gray-100 sticky top-16 z-40">
+<div class="achievement-filter-wrap bg-white border-b border-gray-100 sticky top-16 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex gap-2 overflow-x-auto py-4 scrollbar-none">
             <a href="{{ route('achievement.index') }}"
@@ -36,8 +36,8 @@
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
+<div class="achievements-index-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="achievements-index-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
         @forelse($achievements as $ach)
         <div class="achievement-card">
             <div class="flex items-start gap-4">

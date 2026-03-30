@@ -43,7 +43,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Gambar Slider <span style="color:#ef4444">*</span></label>
-                    <input type="file" name="image" accept="image/*" class="form-input" onchange="previewImg(this)" required>
+                    <input type="file" name="image" accept="image/*" class="form-input" data-crop="true" data-crop-ratio="1920/700" data-preview-img="imgPreview" data-preview-box="imgPreviewBox" required>
                     <p style="font-size:.75rem;color:#9ca3af;margin-top:.3rem">Ukuran ideal: 1920×700 px</p>
                     <div id="imgPreviewBox" style="display:none;margin-top:.75rem">
                         <img id="imgPreview" style="width:100%;max-height:220px;object-fit:cover;border-radius:8px">
@@ -59,6 +59,3 @@
 </form>
 </div>
 @endsection
-@push('scripts')
-<script>function previewImg(i){if(i.files&&i.files[0]){const r=new FileReader();r.onload=e=>{document.getElementById('imgPreview').src=e.target.result;document.getElementById('imgPreviewBox').style.display='block'};r.readAsDataURL(i.files[0])}}</script>
-@endpush

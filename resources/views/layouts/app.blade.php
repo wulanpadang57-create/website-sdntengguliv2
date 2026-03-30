@@ -10,6 +10,76 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <style>
+        /* Mobile fallback overrides: applied directly so UI updates appear even without Vite rebuild */
+        @media (max-width: 640px) {
+            .news-index-layout { gap: 1rem !important; }
+            .news-index-sidebar { display: grid; gap: .75rem !important; }
+            .news-index-sidebar > div { padding: .8rem !important; border-radius: .85rem !important; }
+            .news-index-sidebar .space-y-1 {
+                display: flex;
+                gap: .45rem;
+                overflow-x: auto;
+                padding-bottom: .2rem;
+                scrollbar-width: none;
+            }
+            .news-index-sidebar .space-y-1::-webkit-scrollbar { display: none; }
+            .news-index-sidebar .space-y-1 a {
+                flex-shrink: 0;
+                white-space: nowrap;
+                padding: .45rem .75rem !important;
+                border-radius: .7rem !important;
+                font-size: .74rem !important;
+            }
+
+            .news-index-grid,
+            .extracurricular-index-grid {
+                display: grid !important;
+                gap: .7rem !important;
+                grid-template-columns: 1fr !important;
+            }
+            .news-index-grid .news-card,
+            .extracurricular-index-grid .news-card {
+                display: grid;
+                grid-template-columns: 112px 1fr;
+                min-height: 112px;
+            }
+            .news-index-grid .news-card-img,
+            .extracurricular-index-grid .news-card-img {
+                height: auto !important;
+                min-height: 112px;
+            }
+            .news-index-grid .news-card > .p-5,
+            .extracurricular-index-grid .news-card > .p-5 { padding: .75rem .7rem !important; }
+
+            .achievement-filter-wrap .py-4 { padding-top: .65rem !important; padding-bottom: .65rem !important; }
+            .achievement-filter-wrap a { font-size: .72rem !important; padding: .4rem .7rem !important; border-radius: .7rem !important; }
+            .achievements-index-grid {
+                grid-template-columns: 1fr !important;
+                gap: .7rem !important;
+            }
+            .achievements-index-grid .achievement-card { padding: .85rem !important; border-radius: .9rem !important; }
+            .achievements-index-grid .achievement-card .mt-4.rounded-xl { height: 105px !important; }
+
+            .gallery-index-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: .7rem !important; }
+            .gallery-index-grid .gallery-card { aspect-ratio: 1/1; border-radius: .85rem; }
+            .gallery-index-grid .gallery-overlay {
+                opacity: 1;
+                padding: .6rem;
+                background: linear-gradient(to top, rgba(10,74,60,.78) 0%, rgba(10,74,60,.16) 60%, transparent);
+            }
+
+            .teachers-index-page { gap: 2rem !important; }
+            .teachers-index-page .section-title { margin-bottom: 1rem !important; }
+            .teachers-index-page .teacher-img-wrap[style*="height:300px"] { height: 220px !important; }
+            .teachers-index-page .teacher-img-wrap[style*="height:260px"] { height: 180px !important; }
+            .teachers-index-page .teacher-img-wrap[style*="height:220px"] { height: 150px !important; }
+            .teachers-vice-grid,
+            .teachers-staff-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: .65rem !important; }
+            .teachers-vice-grid .teacher-card .p-5,
+            .teachers-staff-grid .teacher-card .p-4 { padding: .65rem !important; }
+        }
+    </style>
     @stack('styles')
 </head>
 <body>
@@ -39,6 +109,7 @@
                         ['home','Beranda'],
                         ['news.index','Berita'],
                         ['achievement.index','Prestasi'],
+                        ['extracurricular.index','Ekstrakurikuler'],
                         ['gallery.index','Galeri'],
                         ['teacher.index','Guru & Staff'],
                     ] as [$route, $label])
@@ -72,6 +143,7 @@
                     ['home','Beranda','fa-house'],
                     ['news.index','Berita','fa-newspaper'],
                     ['achievement.index','Prestasi','fa-trophy'],
+                    ['extracurricular.index','Ekstrakurikuler','fa-shapes'],
                     ['gallery.index','Galeri','fa-images'],
                     ['teacher.index','Guru & Staff','fa-chalkboard-user'],
                 ] as [$route, $label, $icon])
@@ -136,6 +208,7 @@
                             ['home','Beranda'],
                             ['news.index','Berita & Informasi'],
                             ['achievement.index','Prestasi Siswa'],
+                            ['extracurricular.index','Ekstrakurikuler'],
                             ['gallery.index','Galeri Foto'],
                             ['teacher.index','Guru & Staff'],
                         ] as [$r,$l])

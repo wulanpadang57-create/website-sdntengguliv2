@@ -58,7 +58,7 @@
                         <p style="font-size:.72rem;color:#9ca3af;margin-top:.35rem">Gambar saat ini. Upload baru untuk mengganti.</p>
                     </div>
                     @endif
-                    <input type="file" name="featured_image" accept="image/*" class="form-input" onchange="previewImg(this)">
+                    <input type="file" name="featured_image" accept="image/*" class="form-input" data-crop="true" data-crop-ratio="16/9" data-preview-img="imgPreview" data-preview-box="imgPreviewBox">
                     <div id="imgPreviewBox" style="display:none;margin-top:.75rem">
                         <img id="imgPreview" style="width:100%;border-radius:8px;object-fit:cover;max-height:120px">
                     </div>
@@ -72,7 +72,4 @@
     </div>
 </form>
 @endsection
-@push('scripts')
-<script>function previewImg(input){if(input.files&&input.files[0]){const r=new FileReader();r.onload=e=>{document.getElementById('imgPreview').src=e.target.result;document.getElementById('imgPreviewBox').style.display='block';};r.readAsDataURL(input.files[0]);}}</script>
-@endpush
         <div>

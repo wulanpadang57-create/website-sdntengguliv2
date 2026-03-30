@@ -360,6 +360,63 @@
 @endif
 
 {{-- ================================================================
+     EXTRACURRICULAR
+================================================================ --}}
+@if(($extracurriculars ?? collect())->count())
+<section class="py-20" style="background:linear-gradient(180deg,#f7f4ed 0%,#ffffff 42%)">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10" data-reveal="up">
+            <div>
+                <div class="section-eyebrow mb-3">Ruang Tumbuh Bakat</div>
+                <h2 class="section-title">Program <span class="gradient-text">Ekstrakurikuler</span></h2>
+            </div>
+            <a href="{{ route('extracurricular.index') }}" class="btn btn-outline-red flex-shrink-0">
+                Lihat Semua Program <i class="fas fa-arrow-right text-xs"></i>
+            </a>
+        </div>
+
+        <div class="news-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7" data-reveal-group>
+            @foreach($extracurriculars as $item)
+            <article class="news-card">
+                <div class="news-card-img" style="height:190px">
+                    @if($item->featured_image)
+                    <img src="{{ asset('storage/'.$item->featured_image) }}" alt="{{ $item->title }}">
+                    @else
+                    <div class="w-full h-full flex items-center justify-center"
+                         style="background:linear-gradient(135deg,#a8e5d6,#2aad8c)">
+                        <i class="fas fa-shapes text-white text-4xl opacity-30"></i>
+                    </div>
+                    @endif
+                    <div class="ribbon">Ekstrakurikuler</div>
+                </div>
+
+                <div class="p-5 flex flex-col flex-1">
+                    <h3 class="font-bold text-gray-900 text-sm mb-2 line-clamp-2 transition-colors"
+                        onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color=''">
+                        {{ $item->title }}
+                    </h3>
+                    <p class="text-gray-500 text-xs flex-1 line-clamp-2 mb-4 leading-relaxed">
+                        {{ Str::limit(strip_tags($item->content), 100) }}
+                    </p>
+                    <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                        <span class="flex items-center gap-1.5 text-xs text-gray-400">
+                            <i class="fas fa-calendar" style="color:var(--primary)"></i>
+                            {{ $item->published_at->format('d M Y') }}
+                        </span>
+                        <a href="{{ route('extracurricular.show', $item->slug) }}"
+                           class="text-xs font-bold flex items-center gap-1 hover:gap-2 transition-all" style="color:var(--primary)">
+                            Baca <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+            </article>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- ================================================================
      TEACHERS
 ================================================================ --}}
 @if($teachers->count())
