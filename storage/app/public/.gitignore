@@ -1,2 +1,3 @@
-*
+# Personal project: track uploaded files so assets sync via git pull.
+# Keep this file so the directory is explicit in the repository.
 !.gitignore
