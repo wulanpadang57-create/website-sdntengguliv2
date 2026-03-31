@@ -1,0 +1,54 @@
+PANDUAN TRANSFER DATABASE AGAR FOTO/KONTEN MUNCUL DI DEVICE BARU
+
+KASUS:
+- Kode sudah git pull/clone
+- Tapi foto dokumentasi tidak muncul
+- Penyebab paling umum: data database di device baru masih kosong/beda
+
+LANGKAH CEPAT (CMD)
+
+A) DI DEVICE LAMA (DATA LENGKAP)
+1. Buka CMD
+2. Masuk folder project:
+   cd C:\laragon\www\websitesdn1tengguli
+3. Buat dump database:
+   mysqldump -u root websitesdn1tengguli > backup.sql
+4. Cek file backup ada:
+   dir backup.sql
+5. Cek ukuran file backup (harus bukan 0):
+   for %I in (backup.sql) do @echo %~zI
+
+B) PINDAHKAN FILE
+- Pindahkan backup.sql ke device baru
+- Taruh di folder project device baru
+
+C) DI DEVICE BARU
+1. Buka CMD
+2. Masuk folder project:
+   cd C:\laragon\www\website-sdntengguliv2
+3. Pastikan backup ada:
+   dir backup.sql
+4. Import database:
+   mysql -u root websitesdn1tengguli < backup.sql
+5. Refresh Laravel:
+   php artisan optimize:clear
+   php artisan storage:link
+
+D) VERIFIKASI DATA MASUK
+Jalankan:
+mysql -u root websitesdn1tengguli -e "SELECT COUNT(*) AS news FROM news WHERE featured_image IS NOT NULL; SELECT COUNT(*) AS teachers FROM teachers WHERE photo IS NOT NULL; SELECT COUNT(*) AS galleries FROM galleries WHERE cover_image IS NOT NULL; SELECT COUNT(*) AS gallery_photos FROM gallery_photos;"
+
+Jika hasil count tidak 0, maka data dokumentasi sudah masuk.
+
+CATATAN PENTING
+- Di PowerShell, operator < sering error.
+- Jika pakai PowerShell, jalankan import dengan:
+  cmd /c "mysql -u root websitesdn1tengguli < backup.sql"
+
+- Jika mysqldump tidak dikenali:
+  for /r C:\laragon\bin %i in (mysqldump.exe) do @echo %i
+  Lalu jalankan path mysqldump.exe yang ditemukan.
+
+- Jika mysql tidak dikenali:
+  for /r C:\laragon\bin %i in (mysql.exe) do @echo %i
+  Lalu jalankan path mysql.exe yang ditemukan.
